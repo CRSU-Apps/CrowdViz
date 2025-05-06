@@ -1,10 +1,11 @@
 
-# {metafor} object extraction
+# {metafor} object extraction (rma.uni)
 
 MetaforExtract <- function(model) {
 
   RelEff <- model$b
   RelConfInt <- c(model$ci.lb, model$ci.ub)
+  OutcomeType <- model$measure
 
 }
 
