@@ -11,14 +11,14 @@
 #' .GetSvgText()
 #' .GetSvgText("cat.svg")
 #' .GetSvgText("cat.svg", 0.2, 0.8)
-.GetSvgText <- function(filename="person-solid.svg", colour="#000000", start_proportion=0, end_proportion=1) {
+.GetSvgText <- function(filename="skinny-person.svg", colour="#000000", start_proportion=0, end_proportion=1) {
   raw_svg_text <- readtext::readtext(filename)$text |>
     stringr::str_replace_all("\n\\s*", " ")
-  
+
   width = as.integer(stringr::str_extract(raw_svg_text, '<svg.*viewBox="(?:[0-9]+ ){2}([0-9]+)', 1))
   start = as.integer(start_proportion * width)
   end = as.integer((end_proportion - start_proportion) * width)
-  
+
   svg_text <- raw_svg_text |>
     # Set the view box to truncate the image left or right
     # Viewbox is of form "X-position Y-position width height"
@@ -27,6 +27,6 @@
     stringr::str_replace_all('(<path.*)style=".*?" ?', glue::glue('\\1')) |>
     # Add new colour styling
     stringr::str_replace_all('(<path.*d=".*?")( ?\\/>)', glue::glue('\\1 style="fill:{colour}"/>\\2'))
-  
+
   return(svg_text)
 }

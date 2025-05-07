@@ -1,4 +1,4 @@
-
+library(ggplot2)
 
 #=============================================================================
 
@@ -32,21 +32,21 @@ MetaforExtract <- function(model) {
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb) {
 
-  if (OutcomeType = "RD") {
+  if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
     TrtConfInt <- ComConfInt + RelConfInt
 
   }
 
-  if (OutcomeType = "RR") {
+  if (OutcomeType == "RR") {
 
     TrtProb <- ComProb * RelEff
     TrtConfInt <- ComConfInt * RelConfInt
 
   }
 
-  if (OutcomeType = "OR") {
+  if (OutcomeType == "OR") {
 
     TrtProb <- (ComProb * RelEff) / (1 - ComProb + ComProb * RelEff)
     TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
@@ -70,11 +70,11 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
   svg_text <- .GetSvgText()
   ggplot() +
-    geom_point_svg(
+    ggsvg::geom_point_svg(
       data = PeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text,
-      size     = 10
+      size     = 3
     ) +
 
     geom_line(
