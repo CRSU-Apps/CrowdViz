@@ -1,4 +1,7 @@
 
+
+#=============================================================================
+
 # {metafor} object extraction (rma.uni)
 
 MetaforExtract <- function(model) {
@@ -49,5 +52,46 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
 
   }
+
+  PeoplePos <- data.frame(
+    x = 1:100,
+    y = rep(1,100)
+  )
+
+  LinePos1 <- data.frame(
+   x = c(0,100),
+   y = c(0.25,0.25)
+  )
+
+  LinePos2 <- data.frame(
+    x = c(0,100),
+    y = c(1.75,1.75)
+  )
+
+  svg_text <- .GetSvgText()
+  ggplot() +
+    geom_point_svg(
+      data = PeoplePos,
+      mapping  = aes(x, y),
+      svg      = svg_text,
+      size     = 10
+    ) +
+
+    geom_line(
+      data = LinePos1,
+      mapping = aes(x,y),
+      linewidth = 2
+    ) +
+
+    geom_line(
+      data = LinePos2,
+      mapping = aes(x,y)
+    ) +
+
+    ylim(-1,3) + xlim(0,120) +
+
+    annotate("text", x = 110, y = 1.75, label = ComparatorName) +
+
+    theme_void()
 
 }
