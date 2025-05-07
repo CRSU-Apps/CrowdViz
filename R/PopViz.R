@@ -83,8 +83,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   )
 
 
-
-  svg_text <- .GetSvgText()
+ # svg_filename <- GetSvgFilename()
+  svg_text <- GetSvgText()
   ggplot() +
     ggsvg::geom_point_svg(
       data = PeoplePos,
@@ -132,8 +132,6 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     annotate("text",
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
-
-
 
     theme_void()
 

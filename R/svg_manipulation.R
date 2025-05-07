@@ -1,3 +1,20 @@
+
+GetSvgFilename <- function(NoPeople) {
+
+  if (NoPeople) {
+
+  }
+
+}
+
+
+
+
+
+
+
+
+
 #' Get text content from an SVG file, and modify with the given styling.
 #'
 #' @param filename Name of file from which to read text. Defaults to "person-solid.svg"
@@ -8,10 +25,10 @@
 #' @return Text extracted from the SVG file, and modified with the given styling
 #'
 #' @examples
-#' .GetSvgText()
-#' .GetSvgText("cat.svg")
-#' .GetSvgText("cat.svg", 0.2, 0.8)
-.GetSvgText <- function(filename="svgs/person-narrow.svg", colour="#000000", start_proportion=0, end_proportion=1) {
+#' GetSvgText()
+#' GetSvgText("cat.svg")
+#' GetSvgText("cat.svg", 0.2, 0.8)
+GetSvgText <- function(filename="svgs/person-super-narrow.svg", colour="#000000", start_proportion=0, end_proportion=1) {
   raw_svg_text <- readtext::readtext(filename)$text |>
     stringr::str_replace_all("\n\\s*", " ")
 
