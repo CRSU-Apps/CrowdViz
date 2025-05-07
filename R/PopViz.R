@@ -30,7 +30,7 @@ MetaforExtract <- function(model) {
   # ComConfInt = Confidence interval of probability of event in comparator group
 
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
-                   OutcomeType, RelEff, RelConfInt, ComProb) {
+                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
 
   if (OutcomeType == "RD") {
 
@@ -54,28 +54,32 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   }
 
   PeoplePos <- data.frame(
-    x = 1:100,
-    y = rep(1,100)
+    x = seq(0, 1, length = NoPeople),
+    y = rep(1, NoPeople)
   )
 
   LinePos1 <- data.frame(
-   x = c(0,100),
-   y = c(0.75,0.75)
+   x = c(0, 1),
+   y = c(0.75, 0.75)
   )
 
   LinePos2 <- data.frame(
-    x = c(0,100),
-    y = c(1.25,1.25)
+    x = c(0, 1),
+    y = c(1.25, 1.25)
   )
 
   LinePos3 <- data.frame(
-    x = c(NoPeople * TrtProb, NoPeople * TrtProb),
-    y = c(0.725,0.7755)
+    x = c( (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
+           (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1))
+           ),
+    y = c(0.725, 0.7755)
   )
 
   LinePos4 <- data.frame(
-    x = c(NoPeople * ComProb, NoPeople * ComProb),
-    y = c(1.275,1.225)
+    x = c( (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)),
+           (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1))
+    ),
+    y = c(1.275, 1.225)
   )
 
 
@@ -115,20 +119,35 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       linewidth = 1.5,
     ) +
 
-    ylim(0,2) + xlim(0,120) +
+    ylim(0, 2) + xlim(0, 1.2) +
 
-    annotate("text", x = 111, y = 1.25, label = ComparatorName) +
+    annotate("text", x = 1.11, y = 0.75, label = TreatmentName) +
 
-    annotate("text", x = 111, y = 0.75, label = TreatmentName) +
-
-    annotate("text",
-             label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
-             x = NoPeople * ComProb, y = 1.35) +
+    annotate("text", x = 1.11, y = 1.25, label = ComparatorName) +
 
     annotate("text",
              label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
-             x = NoPeople * TrtProb, y = 0.65) +
+             x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
+
+    annotate("text",
+             label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
+             x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
+
+
 
     theme_void()
 
 }
+
+PopViz(NoPeople = 100,
+       DesireEvent = TRUE,
+       # OutcomeName = "Outcome",
+       TreatmentName = "Treatment",
+       ComparatorName = "Standard Care",
+       OutcomeType = "RD",
+       ComProb = 0.5,
+       ComConfInt = c(0.4, 0.6),
+       RelEff = 0.2,
+       RelConfInt = c(0.1, 0.3),
+       )
+
