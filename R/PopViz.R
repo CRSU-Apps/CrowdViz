@@ -60,13 +60,25 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
   LinePos1 <- data.frame(
    x = c(0,100),
-   y = c(0.25,0.25)
+   y = c(0.75,0.75)
   )
 
   LinePos2 <- data.frame(
     x = c(0,100),
-    y = c(1.75,1.75)
+    y = c(1.25,1.25)
   )
+
+  LinePos3 <- data.frame(
+    x = c(NoPeople * TrtProb, NoPeople * TrtProb),
+    y = c(0.725,0.7755)
+  )
+
+  LinePos4 <- data.frame(
+    x = c(NoPeople * ComProb, NoPeople * ComProb),
+    y = c(1.275,1.225)
+  )
+
+
 
   svg_text <- .GetSvgText()
   ggplot() +
@@ -80,17 +92,42 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     geom_line(
       data = LinePos1,
       mapping = aes(x,y),
-      linewidth = 2
+      linewidth = 1.5,
+      colour = "blue"
     ) +
 
     geom_line(
       data = LinePos2,
-      mapping = aes(x,y)
+      mapping = aes(x,y),
+      linewidth = 1.5
     ) +
 
-    ylim(-1,3) + xlim(0,120) +
+    geom_line(
+      data = LinePos3,
+      mapping = aes(x,y),
+      linewidth = 1.5,
+      colour = "blue"
+    ) +
 
-    annotate("text", x = 110, y = 1.75, label = ComparatorName) +
+    geom_line(
+      data = LinePos4,
+      mapping = aes(x,y),
+      linewidth = 1.5,
+    ) +
+
+    ylim(0,2) + xlim(0,120) +
+
+    annotate("text", x = 111, y = 1.25, label = ComparatorName) +
+
+    annotate("text", x = 111, y = 0.75, label = TreatmentName) +
+
+    annotate("text",
+             label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
+             x = NoPeople * ComProb, y = 1.35) +
+
+    annotate("text",
+             label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
+             x = NoPeople * TrtProb, y = 0.65) +
 
     theme_void()
 
