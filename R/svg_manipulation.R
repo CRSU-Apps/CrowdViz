@@ -11,7 +11,7 @@
 #' .GetSvgText()
 #' .GetSvgText("cat.svg")
 #' .GetSvgText("cat.svg", 0.2, 0.8)
-.GetSvgText <- function(filename="skinny-person.svg", colour="#000000", start_proportion=0, end_proportion=1) {
+.GetSvgText <- function(filename="svgs/person-narrow.svg", colour="#000000", start_proportion=0, end_proportion=1) {
   raw_svg_text <- readtext::readtext(filename)$text |>
     stringr::str_replace_all("\n\\s*", " ")
 
@@ -24,9 +24,9 @@
     # Viewbox is of form "X-position Y-position width height"
     stringr::str_replace('(<svg.*viewBox=")[0-9]+ ([0-9]+) [0-9]+ ([0-9]+")', glue::glue('\\1{start} \\2 {end} \\3')) |>
     # Remove any existing styling
-    stringr::str_replace_all('(<path.*)style=".*?" ?', glue::glue('\\1')) |>
+    stringr::str_replace_all('(<path.*?)style=".*?" ?', glue::glue('\\1')) |>
     # Add new colour styling
-    stringr::str_replace_all('(<path.*d=".*?")( ?\\/>)', glue::glue('\\1 style="fill:{colour}"/>\\2'))
+    stringr::str_replace_all('(<path.*?)( ?\\/>)', glue::glue('\\1 style="fill:{colour}"/>\\2'))
 
   return(svg_text)
 }
