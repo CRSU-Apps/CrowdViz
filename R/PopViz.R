@@ -1,22 +1,5 @@
 library(ggplot2)
 
-#=============================================================================
-
-# {metafor} object extraction (rma.uni)
-
-MetaforExtract <- function(model) {
-
-  RelEff <- model$b
-  RelConfInt <- c(model$ci.lb, model$ci.ub)
-  OutcomeType <- model$measure
-
-}
-
-
-
-
-
-
 #==============================================================================
 
   # NoPeople = number of people to be displayed in the chart
@@ -52,10 +35,26 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
 
   }
-
-  PeoplePos <- data.frame(
+  
+  TrtCount = round(NoPeople * TrtProb)
+  ComCount = round(NoPeople * ComProb)
+  
+  person_spacing = 1 / (NoPeople - 1)
+  AllPeoplePos <- data.frame(
     x = seq(0, 1, length = NoPeople),
     y = rep(1, NoPeople)
+  )
+  
+  common_affected_person_count = min(TrtCount, ComCount)
+  CommonAffectedPeoplePos <- data.frame(
+    x = seq(0, person_spacing * (common_affected_person_count - 1), length = common_affected_person_count),
+    y = rep(1, common_affected_person_count)
+  )
+  
+  relative_affected_person_count = max(TrtCount, ComCount)
+  RelativeAffectedPeoplePos <- data.frame(
+    x = seq(0, person_spacing * (relative_affected_person_count - 1), length = relative_affected_person_count),
+    y = rep(1, relative_affected_person_count)
   )
 
   LinePos1 <- data.frame(
@@ -83,14 +82,41 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   )
 
 
+<<<<<<< HEAD
  # svg_filename <- GetSvgFilename()
   svg_text <- GetSvgText()
+=======
+  
+  svg_text_base <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
+  svg_text_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
+  
+  if (xor(TrtCount < ComCount, DesireEvent)) {
+    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
+  } else {
+    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
+  }
+  
+>>>>>>> 9fda4ad58685d51e21e9b3969b84a96b21aaa331
   ggplot() +
     ggsvg::geom_point_svg(
-      data = PeoplePos,
+      data = AllPeoplePos,
       mapping  = aes(x, y),
-      svg      = svg_text,
+      svg      = svg_text_base,
       size     = 3
+    ) +
+    ggsvg::geom_point_svg(
+      data = RelativeAffectedPeoplePos,
+      mapping  = aes(x, y),
+      svg      = svg_text_relative_affected,
+      size     = 3,
+      svg_width = 100
+    ) +
+    ggsvg::geom_point_svg(
+      data = CommonAffectedPeoplePos,
+      mapping  = aes(x, y),
+      svg      = svg_text_affected,
+      size     = 3,
+      svg_width = 100
     ) +
 
     geom_line(
@@ -137,7 +163,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 }
 
-PopViz(NoPeople = 100,
+PopViz(NoPeople = 50,
        DesireEvent = TRUE,
        # OutcomeName = "Outcome",
        TreatmentName = "Treatment",
