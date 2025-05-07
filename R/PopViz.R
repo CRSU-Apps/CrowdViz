@@ -10,7 +10,6 @@ library(ggplot2)
   # RelEff = Relative effect point estimate calculated from meta-analysis
   # RelConfInt = Relative effect confidence interval <c(a,b)>
   # ComProb = Probability of event in comparator group
-  # ComConfInt = Confidence interval of probability of event in comparator group
 
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
@@ -18,21 +17,21 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
-    TrtConfInt <- ComConfInt + RelConfInt
+    TrtConfInt <- ComProb + RelConfInt
 
   }
 
   if (OutcomeType == "RR") {
 
     TrtProb <- ComProb * RelEff
-    TrtConfInt <- ComConfInt * RelConfInt
+    TrtConfInt <- ComProb * RelConfInt
 
   }
 
   if (OutcomeType == "OR") {
 
     TrtProb <- (ComProb * RelEff) / (1 - ComProb + ComProb * RelEff)
-    TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
+    TrtConfInt <- (ComProb * RelConfInt) / (1 - ComProb + ComProb * RelConfInt)
 
   }
 
@@ -84,13 +83,13 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 
 
-  svg_text_base <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
-  svg_text_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
+  svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
+  svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
 
   if (xor(TrtCount < ComCount, DesireEvent)) {
-    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
   } else {
-    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
   }
 
 
@@ -167,7 +166,6 @@ PopViz(NoPeople = 50,
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
-       ComConfInt = c(0.4, 0.6),
        RelEff = 0.2,
        RelConfInt = c(0.1, 0.3),
        )
