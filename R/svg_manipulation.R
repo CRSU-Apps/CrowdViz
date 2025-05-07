@@ -15,14 +15,14 @@
   raw_svg_text <- readtext::readtext(filename)$text |>
     stringr::str_replace_all("\n\\s*", " ")
 
-  width = as.integer(stringr::str_extract(raw_svg_text, '<svg.*viewBox="(?:[0-9]+ ){2}([0-9]+)', 1))
+  width = as.integer(stringr::str_extract(raw_svg_text, '<svg.*viewBox="(?:[0-9.]+ ){2}([0-9.]+)', 1))
   start = as.integer(start_proportion * width)
   end = as.integer((end_proportion - start_proportion) * width)
 
   svg_text <- raw_svg_text |>
     # Set the view box to truncate the image left or right
     # Viewbox is of form "X-position Y-position width height"
-    stringr::str_replace('(<svg.*viewBox=")[0-9]+ ([0-9]+) [0-9]+ ([0-9]+")', glue::glue('\\1{start} \\2 {end} \\3')) |>
+    stringr::str_replace('(<svg.*viewBox=")[0-9.]+ ([0-9.]+) [0-9.]+ ([0-9.]+")', glue::glue('\\1{start} \\2 {end} \\3')) |>
     # Remove any existing styling
     stringr::str_replace_all('(<path.*?)style=".*?" ?', glue::glue('\\1')) |>
     # Add new colour styling
