@@ -1,4 +1,4 @@
- ggplot2 version of denstrip function
+# ggplot2 version of denstrip function
 #
 # @include ggplot2
 # @examples
