@@ -1,5 +1,7 @@
 #' @include zzz.R
 
+library(ggplot2)
+
 #' Create a population visualisation for absolute effects.
 #'
 #' @param NoPeople Number of people to display
