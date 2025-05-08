@@ -11,7 +11,6 @@ library(ggplot2)
 #' @param RelEff Point estimate of relative effect
 #' @param RelConfInt Vector of lower and upper limits of confidence interval of relative effect
 #' @param ComProb Probability of event in reference intervention
-#' @param ComConfInt Vector of lower and upper limits of confidence interval of relative effect
 #'
 #' @return ggplot2 plot object
 #' @export
@@ -108,14 +107,24 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       dens = dnorm(x, LinePos3$x[1], 0.05)
     )
 
-
-  svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
-  svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
+## Dynamic Glyphing
+  
+  if (NoPeople <= 10) {
+    dynamic_person_file <- "svgs/person-solid.svg"
+  } else if (10 < NoPeople & NoPeople <= 50) {
+    dynamic_person_file <- "svgs/person-narrow.svg"
+  } else if (50 < NoPeople & NoPeople <= 100) {
+    dynamic_person_file <- "svgs/person-super-narrow.svg"
+  } else {warning("Please specify 100 or fewer people")}
+  
+  
+  svg_text_base <- GetSvgText(filename = dynamic_person_file, colour = "#444444")
+  svg_text_affected <- GetSvgText(filename = dynamic_person_file, colour = "#ffaa00")
 
   if (xor(TrtCount < ComCount, DesireEvent)) {
-    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
+    svg_text_relative_affected <- GetSvgText(filename = dynamic_person_file, colour = "#00ff00")
   } else {
-    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
+    svg_text_relative_affected <- GetSvgText(filename = dynamic_person_file, colour = "#ff0000")
   }
 
 
@@ -208,12 +217,14 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     if (is.null(Title)) {
 
       if (TrtProb > ComProb) {
-        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+        plot <- plot + ggtitle(label = stringr::str_wrap(
+                                      paste0("In a group of ", NoPeople, " People, ",
                                       TreatmentName, " increases the number of ",
                                       OutcomeName, " by ",
                                       (round(NoPeople*TrtProb,0)) -
                                       (round(NoPeople*ComProb,0)), " on average ",
-                                      "compared to ", ComparatorName)
+                                      "compared to ", ComparatorName),
+                                      60)
                                      ) +
           theme(plot.title = element_text(hjust = 0.5))
       }
@@ -249,15 +260,14 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 }
 
-PopViz(NoPeople = 50,
+PopViz(NoPeople = 5,
        DesireEvent = FALSE,
        OutcomeName = "Adverse Events",
        TreatmentName = "Treatment",
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
-       ComConfInt = c(0.4, 0.6),
-       RelEff = -0.3,
+       RelEff = 0.2,
        RelConfInt = c(0.1, 0.3)
 )
 
