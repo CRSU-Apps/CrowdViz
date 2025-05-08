@@ -109,12 +109,14 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 ## Dynamic Glyphing
   
+  browser()
+  
   if (NoPeople <= 10) {
-    dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
+    dynamic_person_file <- "extdata/person-solid.svg"
   } else if (10 < NoPeople & NoPeople <= 50) {
-    dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
+    dynamic_person_file <- "extdata/person-narrow.svg"
   } else if (50 < NoPeople & NoPeople <= 100) {
-    dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
+    dynamic_person_file <- "extdata/person-super-narrow.svg"
   } else {
     stop("Please specify 100 or fewer people")
   }
