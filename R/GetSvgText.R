@@ -1,24 +1,4 @@
 
-.onLoad = function (libname, pkgname) {
-  ns <- topenv()
-  ns$person_super_narrow <- system.file("person-super-narrow.svg", package = "PopViz")
-}
-
-GetSvgFilename <- function(NoPeople) {
-
-  if (NoPeople) {
-
-  }
-
-}
-
-
-
-
-
-
-
-
 
 #' Get text content from an SVG file, and modify with the given styling.
 #'
