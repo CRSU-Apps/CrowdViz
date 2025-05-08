@@ -20,6 +20,7 @@ Imports:
     ggplot2,
     dplyr,
     glue,
-    stringr,
-    ggsvg
+    stringr
+Remotes:
+    coolbutuseless/ggsvg
 RoxygenNote: 7.3.2

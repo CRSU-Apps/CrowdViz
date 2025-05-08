@@ -14,7 +14,8 @@ PopViz(
   RelEff,
   RelConfInt,
   ComProb,
-  ComConfInt
+  ComConfInt,
+  Title = NULL
 )
 }
 \arguments{
