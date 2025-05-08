@@ -21,7 +21,8 @@ Imports:
     dplyr,
     glue,
     stringr,
-    readtext
+    readtext,
+    ggsvg
 Remotes:
     coolbutuseless/ggsvg
 RoxygenNote: 7.3.2
