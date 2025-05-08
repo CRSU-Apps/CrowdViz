@@ -13,7 +13,7 @@ library(ggplot2)
   # ComConfInt = Confidence interval of probability of event in comparator group
 
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
-                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
+                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
 
   if (OutcomeType == "RD") {
 
@@ -84,17 +84,17 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 
 
-  svg_text_base <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
-  svg_text_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
+  svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
+  svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
 
   if (xor(TrtCount < ComCount, DesireEvent)) {
-    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
   } else {
-    svg_text_relative_affected <- .GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
   }
 
 
-  ggplot() +
+  plot <- ggplot() +
     ggsvg::geom_point_svg(
       data = AllPeoplePos,
       mapping  = aes(x, y),
@@ -158,17 +158,60 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
     theme_void()
 
+    # # Dynamic default title
+
+    if (is.null(Title)) {
+
+      if (TrtProb > ComProb) {
+        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                      TreatmentName, " increases the number of ",
+                                      OutcomeName, " by ",
+                                      (round(NoPeople*TrtProb,0)) -
+                                      (round(NoPeople*ComProb,0)), " on average ",
+                                      "compared to ", ComparatorName)
+                                     ) +
+          theme(plot.title = element_text(hjust = 0.5))
+      }
+
+       if (TrtProb == ComProb) {
+         plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                               TreatmentName, " does not change the number of ",
+                                               OutcomeName, " on average ",
+                                               "compared to ", ComparatorName)
+         ) +
+           theme(plot.title = element_text(hjust = 0.5))
+      }
+
+      if (TrtProb < ComProb) {
+        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                              TreatmentName, " decreases the number of ",
+                                              OutcomeName, " by ",
+                                              (round(NoPeople*ComProb,0)) -
+                                                (round(NoPeople*TrtProb,0)), " on average ",
+                                              "compared to ", ComparatorName)
+        ) +
+          theme(plot.title = element_text(hjust = 0.5))
+      }
+
+    } else {
+
+      plot <- plot + ggtitle(label=Title) +
+        theme(plot.title = element_text(hjust = 0.5))
+
+    }
+
+  return(plot)
 }
 
 PopViz(NoPeople = 50,
-       DesireEvent = TRUE,
-       # OutcomeName = "Outcome",
+       DesireEvent = FALSE,
+       OutcomeName = "Adverse Events",
        TreatmentName = "Treatment",
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
        ComConfInt = c(0.4, 0.6),
-       RelEff = 0.2,
+       RelEff = -0.3,
        RelConfInt = c(0.1, 0.3),
        )
 
