@@ -23,6 +23,7 @@ GetSvgFilename <- function(NoPeople) {
 #' @param end_proportion Proportion by which to include along the right side of the image. Defaults to 1
 #'
 #' @return Text extracted from the SVG file, and modified with the given styling
+#' @export
 #'
 #' @examples
 #' GetSvgText()
