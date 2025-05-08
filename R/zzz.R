@@ -1,4 +1,4 @@
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot geom_tile scale_fill_continuous geom_line xlim ylim annotate theme_void theme ggtitle
 #' 
 NULL
 person_solid <- file.path("inst","person-solid.svg")

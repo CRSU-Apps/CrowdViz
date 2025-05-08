@@ -213,7 +213,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
 
-    theme_void() + theme(legend.position = "none")
+    theme_void() +
+    theme(legend.position = "none")
 
     # # Dynamic default title
 
@@ -254,7 +255,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
     } else {
 
-      plot <- plot + ggtitle(label=Title) +
+      plot <- plot +
+        ggtitle(label=Title) +
         theme(plot.title = element_text(hjust = 0.5))
 
     }
