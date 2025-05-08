@@ -36,8 +36,6 @@ PopViz(
 \item{RelConfInt}{Vector of lower and upper limits of confidence interval of relative effect}
 
 \item{ComProb}{Probability of event in reference intervention}
-
-\item{ComConfInt}{Vector of lower and upper limits of confidence interval of relative effect}
 }
 \value{
 ggplot2 plot object

@@ -104,17 +104,17 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       x = seq(1, 0, length.out = 1000),
       y = LinePos1$y[1]) |>
     dplyr::mutate(
-      dens = dnorm(x, LinePos3$x[1], 0.05)
+      dens = dnorm(x, TrtProb, (TrtConfInt[2] - TrtConfInt[1]) / (2 * 1.96))
     )
 
 ## Dynamic Glyphing
   
   if (NoPeople <= 10) {
-    dynamic_person_file <- "inst/person-solid.svg"
+    dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
   } else if (10 < NoPeople & NoPeople <= 50) {
-    dynamic_person_file <- "inst/person-narrow.svg"
+    dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
   } else if (50 < NoPeople & NoPeople <= 100) {
-    dynamic_person_file <- "inst/person-super-narrow.svg"
+    dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
   } else {
     stop("Please specify 100 or fewer people")
   }
