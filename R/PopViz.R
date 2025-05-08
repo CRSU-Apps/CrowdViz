@@ -1,7 +1,8 @@
 #' @include zzz.R
-
-#' Create a population visualisation for absolute effects.
-#'
+NULL
+#' @description
+#' Create a population visualisation for absolute effects
+#'  
 #' @param NoPeople Number of people to display
 #' @param DesireEvent TRUE if events are desired, else FALSE
 #' @param OutcomeName Name of event being measured

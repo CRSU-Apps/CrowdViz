@@ -5,7 +5,7 @@
 \title{Get text content from an SVG file, and modify with the given styling.}
 \usage{
 GetSvgText(
-  filename = system.file("person-super-narrow.svg", package = "PopViz"),
+  filename = person_super_narrow,
   colour = "#000000",
   start_proportion = 0,
   end_proportion = 1
