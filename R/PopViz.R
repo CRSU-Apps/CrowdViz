@@ -1,16 +1,5 @@
 library(ggplot2)
 
-#==============================================================================
-
-  # NoPeople = number of people to be displayed in the chart
-  # DesireEvent = is the outcome/event favourable/desirable (<TRUE/FALSE>)
-  # OutcomeName
-  # TreatmentName
-  # OutcomeType (Relative Risk, Odds Ratio, Risk Difference)
-  # RelEff = Relative effect point estimate calculated from meta-analysis
-  # RelConfInt = Relative effect confidence interval <c(a,b)>
-  # ComProb = Probability of event in comparator group
-
 #' Create a population visualisation for absolute effects.
 #'
 #' @param NoPeople Number of people to display
@@ -39,7 +28,7 @@ library(ggplot2)
 #' RelConfInt = c(0.1, 0.3)
 #' )
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
-                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
+                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
 
   if (OutcomeType == "RD") {
 
@@ -109,17 +98,17 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     ),
     y = c(1.275, 1.225)
   )
-  
-  tile_dat <- 
+
+
+  tile_dat <-
     data.frame(
       x = seq(1, 0, length.out = 1000),
-      y = LinePos1$y[1]) |> 
+      y = LinePos1$y[1]) |>
     dplyr::mutate(
       dens = dnorm(x, LinePos3$x[1], 0.05)
     )
-  
-  svg_text <- GetSvgText()
-  
+
+
   svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
   svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
 
@@ -130,14 +119,15 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   }
 
 
-  ggplot() +
-    
+
+  plot <- ggplot() +
+
     geom_tile(data = tile_dat,
               aes(x = x, y = y, fill = dens),
               height = 0.1,
               width = 0.01) +
     scale_fill_continuous(low="white", high="black") +
-    
+
     # All people in base colour
     ggsvg::geom_point_svg(
       data = AllPeoplePos,
@@ -145,7 +135,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       svg      = svg_text_base,
       size     = 3
     ) +
-    
+
     # People showing relative effect, from zero, up to maximum of
     # comparator or treatment
     ggsvg::geom_point_svg(
@@ -155,7 +145,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       size     = 3,
       svg_width = 100
     ) +
-    
+
     # People showing common effect, from zero, up to minimum of
     # comparator or treatment
     ggsvg::geom_point_svg(
@@ -171,8 +161,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       mapping = aes(x,y),
       linewidth = 1.5,
       colour = "blue"
-    ) + 
-  
+    ) +
+
     geom_line(
       data = LinePos2,
       mapping = aes(x,y),
@@ -201,7 +191,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     annotate("text",
              label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
-    
+
     annotate("text",
              label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.58,
@@ -211,18 +201,63 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
 
-    theme_void() +
-    theme(legend.position = "none")
+    theme_void() + theme(legend.position = "none")
+
+    # # Dynamic default title
+
+    if (is.null(Title)) {
+
+      if (TrtProb > ComProb) {
+        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                      TreatmentName, " increases the number of ",
+                                      OutcomeName, " by ",
+                                      (round(NoPeople*TrtProb,0)) -
+                                      (round(NoPeople*ComProb,0)), " on average ",
+                                      "compared to ", ComparatorName)
+                                     ) +
+          theme(plot.title = element_text(hjust = 0.5))
+      }
+
+       if (TrtProb == ComProb) {
+         plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                               TreatmentName, " does not change the number of ",
+                                               OutcomeName, " on average ",
+                                               "compared to ", ComparatorName)
+         ) +
+           theme(plot.title = element_text(hjust = 0.5))
+      }
+
+      if (TrtProb < ComProb) {
+        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+                                              TreatmentName, " decreases the number of ",
+                                              OutcomeName, " by ",
+                                              (round(NoPeople*ComProb,0)) -
+                                                (round(NoPeople*TrtProb,0)), " on average ",
+                                              "compared to ", ComparatorName)
+        ) +
+          theme(plot.title = element_text(hjust = 0.5))
+      }
+
+    } else {
+
+      plot <- plot + ggtitle(label=Title) +
+        theme(plot.title = element_text(hjust = 0.5))
+
+    }
+
+  return(plot)
+
 }
 
 PopViz(NoPeople = 50,
-       DesireEvent = TRUE,
-       # OutcomeName = "Outcome",
+       DesireEvent = FALSE,
+       OutcomeName = "Adverse Events",
        TreatmentName = "Treatment",
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
-       RelEff = 0.2,
+       ComConfInt = c(0.4, 0.6),
+       RelEff = -0.3,
        RelConfInt = c(0.1, 0.3)
 )
 
