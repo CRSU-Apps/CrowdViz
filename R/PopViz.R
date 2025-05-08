@@ -18,6 +18,8 @@ library(ggplot2)
 #'
 #' @return ggplot2 plot object
 #' @export
+#' 
+#' @import ggplot2
 #'
 #' @examples
 #' PopViz(NoPeople = 50,
