@@ -109,12 +109,15 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 ## Dynamic Glyphing
   
-  if (NoPeople <= 10) {
-    dynamic_person_file <- "person-solid.svg"
-  } else if (10 < NoPeople & NoPeople <= 50) {
-    dynamic_person_file <- "person-narrow.svg"
+  if (NoPeople <= 20) {
+    dynamic_person_file <- "inst/person-solid.svg"
+    dynamic_person_size <- 8
+  } else if (20 < NoPeople & NoPeople <= 50) {
+    dynamic_person_file <- "inst/person-narrow.svg"
+    dynamic_person_size <- 5
   } else if (50 < NoPeople & NoPeople <= 100) {
-    dynamic_person_file <- "person-super-narrow.svg"
+    dynamic_person_file <- "inst/person-super-narrow.svg"
+    dynamic_person_size <- 3
   } else {warning("Please specify 100 or fewer people")}
   
   
@@ -142,7 +145,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       data = AllPeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text_base,
-      size     = 3
+      size     = dynamic_person_size
     ) +
 
     # People showing relative effect, from zero, up to maximum of
@@ -151,8 +154,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       data = RelativeAffectedPeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text_relative_affected,
-      size     = 3,
-      svg_width = 100
+      size     = dynamic_person_size
     ) +
 
     # People showing common effect, from zero, up to minimum of
@@ -161,8 +163,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       data = CommonAffectedPeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text_affected,
-      size     = 3,
-      svg_width = 100
+      size     = dynamic_person_size
     ) +
 
     geom_line(
@@ -267,7 +268,7 @@ PopViz(NoPeople = 5,
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
-       RelEff = 0.2,
-       RelConfInt = c(0.1, 0.3)
+       RelEff = 0.3,
+       RelConfInt = c(0.1, 0.5)
 )
 
