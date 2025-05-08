@@ -1,8 +1,6 @@
 #' @include zzz.R
 NULL
 
-library(ggplot2)
-
 #' @description
 #' Create a population visualisation for absolute effects
 #'  
@@ -137,18 +135,18 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 
 
-  plot <- ggplot() +
+  plot <- ggplot2::ggplot() +
 
-    geom_tile(data = tile_dat,
-              aes(x = x, y = y, fill = dens),
+    ggplot2::geom_tile(data = tile_dat,
+                       ggplot2::aes(x = x, y = y, fill = dens),
               height = 0.1,
               width = 0.01) +
-    scale_fill_continuous(low="white", high="black") +
+    ggplot2::scale_fill_continuous(low="white", high="black") +
 
     # All people in base colour
     ggsvg::geom_point_svg(
       data = AllPeoplePos,
-      mapping  = aes(x, y),
+      mapping  = ggplot2::aes(x, y),
       svg      = svg_text_base,
       size     = dynamic_person_size
     ) +
@@ -157,7 +155,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     # comparator or treatment
     ggsvg::geom_point_svg(
       data = RelativeAffectedPeoplePos,
-      mapping  = aes(x, y),
+      mapping  = ggplot2::aes(x, y),
       svg      = svg_text_relative_affected,
       size     = dynamic_person_size
     ) +
@@ -166,65 +164,66 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     # comparator or treatment
     ggsvg::geom_point_svg(
       data = CommonAffectedPeoplePos,
-      mapping  = aes(x, y),
+      mapping  = ggplot2::aes(x, y),
       svg      = svg_text_affected,
       size     = dynamic_person_size
     ) +
 
-    geom_line(
+    ggplot2::geom_line(
       data = LinePos1,
-      mapping = aes(x,y),
+      mapping = ggplot2::aes(x,y),
       linewidth = 1.5,
       colour = "blue"
     ) +
 
-    geom_line(
+    ggplot2::geom_line(
       data = LinePos2,
-      mapping = aes(x,y),
+      mapping = ggplot2::aes(x,y),
       linewidth = 1.5
     ) +
 
-    geom_line(
+    ggplot2::geom_line(
       data = LinePos3,
-      mapping = aes(x,y),
+      mapping = ggplot2::aes(x,y),
       linewidth = 1.5,
       colour = "white"
     ) +
 
-    geom_line(
+    ggplot2::geom_line(
       data = LinePos4,
-      mapping = aes(x,y),
+      mapping = ggplot2::aes(x,y),
       linewidth = 1.5,
     ) +
 
-    ylim(0, 2) + xlim(0, 1.2) +
+    ggplot2::ylim(0, 2) +
+    ggplot2::xlim(0, 1.2) +
 
-    annotate("text", x = 1.11, y = 0.75, label = TreatmentName) +
+    ggplot2::annotate("text", x = 1.11, y = 0.75, label = TreatmentName) +
 
-    annotate("text", x = 1.11, y = 1.25, label = ComparatorName) +
+    ggplot2::annotate("text", x = 1.11, y = 1.25, label = ComparatorName) +
 
-    annotate("text",
+    ggplot2::annotate("text",
              label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
 
-    annotate("text",
+    ggplot2::annotate("text",
              label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.58,
              size = 3.2) +
 
-    annotate("text",
+    ggplot2::annotate("text",
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
 
-    theme_void() +
-    theme(legend.position = "none")
+    ggplot2::theme_void() +
+    ggplot2::theme(legend.position = "none")
 
     # # Dynamic default title
 
     if (is.null(Title)) {
 
       if (TrtProb > ComProb) {
-        plot <- plot + ggtitle(label = stringr::str_wrap(
+        plot <- plot + ggplot2::ggtitle(label = stringr::str_wrap(
                                       paste0("In a group of ", NoPeople, " People, ",
                                       TreatmentName, " increases the number of ",
                                       OutcomeName, " by ",
@@ -233,34 +232,34 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
                                       "compared to ", ComparatorName),
                                       60)
                                      ) +
-          theme(plot.title = element_text(hjust = 0.5))
+          ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
       }
 
        if (TrtProb == ComProb) {
-         plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+         plot <- plot + ggplot2::ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
                                                TreatmentName, " does not change the number of ",
                                                OutcomeName, " on average ",
                                                "compared to ", ComparatorName)
          ) +
-           theme(plot.title = element_text(hjust = 0.5))
+           ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
       }
 
       if (TrtProb < ComProb) {
-        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
+        plot <- plot + ggplot2::ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
                                               TreatmentName, " decreases the number of ",
                                               OutcomeName, " by ",
                                               (round(NoPeople*ComProb,0)) -
                                                 (round(NoPeople*TrtProb,0)), " on average ",
                                               "compared to ", ComparatorName)
         ) +
-          theme(plot.title = element_text(hjust = 0.5))
+          ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
       }
 
     } else {
 
       plot <- plot +
-        ggtitle(label=Title) +
-        theme(plot.title = element_text(hjust = 0.5))
+        ggplot2::ggtitle(label=Title) +
+        ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
     }
 
