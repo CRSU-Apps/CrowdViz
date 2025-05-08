@@ -117,8 +117,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     dynamic_person_file <- "inst/person-narrow.svg"
     dynamic_person_size <- 5
   } else if (50 < NoPeople & NoPeople <= 100) {
-	dynamic_person_size <- 3
-
+    dynamic_person_file <- "inst/person-super-narrow.svg"
+	  dynamic_person_size <- 3
   } else {
     stop("Please specify 100 or fewer people")
   }
