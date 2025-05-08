@@ -1,22 +1,5 @@
 library(ggplot2)
 
-#=============================================================================
-
-# {metafor} object extraction (rma.uni)
-
-MetaforExtract <- function(model) {
-
-  RelEff <- model$b
-  RelConfInt <- c(model$ci.lb, model$ci.ub)
-  OutcomeType <- model$measure
-
-}
-
-
-
-
-
-
 #==============================================================================
 
   # NoPeople = number of people to be displayed in the chart
@@ -27,7 +10,6 @@ MetaforExtract <- function(model) {
   # RelEff = Relative effect point estimate calculated from meta-analysis
   # RelConfInt = Relative effect confidence interval <c(a,b)>
   # ComProb = Probability of event in comparator group
-  # ComConfInt = Confidence interval of probability of event in comparator group
 
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
@@ -35,30 +17,46 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
-    TrtConfInt <- ComConfInt + RelConfInt
+    TrtConfInt <- ComProb + RelConfInt
 
   }
 
   if (OutcomeType == "RR") {
 
     TrtProb <- ComProb * RelEff
-    TrtConfInt <- ComConfInt * RelConfInt
+    TrtConfInt <- ComProb * RelConfInt
 
   }
 
   if (OutcomeType == "OR") {
 
     TrtProb <- (ComProb * RelEff) / (1 - ComProb + ComProb * RelEff)
-    TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
+    TrtConfInt <- (ComProb * RelConfInt) / (1 - ComProb + ComProb * RelConfInt)
 
   }
 
-  PeoplePos <- data.frame(
+  TrtCount = round(NoPeople * TrtProb)
+  ComCount = round(NoPeople * ComProb)
+
+  person_spacing = 1 / (NoPeople - 1)
+  AllPeoplePos <- data.frame(
     x = seq(0, 1, length = NoPeople),
     y = rep(1, NoPeople)
   )
 
   # horizontal lines
+  common_affected_person_count = min(TrtCount, ComCount)
+  CommonAffectedPeoplePos <- data.frame(
+    x = seq(0, person_spacing * (common_affected_person_count - 1), length = common_affected_person_count),
+    y = rep(1, common_affected_person_count)
+  )
+
+  relative_affected_person_count = max(TrtCount, ComCount)
+  RelativeAffectedPeoplePos <- data.frame(
+    x = seq(0, person_spacing * (relative_affected_person_count - 1), length = relative_affected_person_count),
+    y = rep(1, relative_affected_person_count)
+  )
+
   LinePos1 <- data.frame(
    x = c(0, 1),
    y = c(0.75, 0.75)
@@ -95,6 +93,16 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   
   svg_text <- .GetSvgText()
   
+  svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
+  svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
+
+  if (xor(TrtCount < ComCount, DesireEvent)) {
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#00ff00")
+  } else {
+    svg_text_relative_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ff0000")
+  }
+
+
   ggplot() +
     
     geom_tile(data = tile_dat,
@@ -104,12 +112,28 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     scale_fill_continuous(low="white", high="black") +
     
     ggsvg::geom_point_svg(
-      data = PeoplePos,
+      data = AllPeoplePos,
       mapping  = aes(x, y),
-      svg      = svg_text,
+      svg      = svg_text_base,
       size     = 3
     ) +
     
+    ggsvg::geom_point_svg(
+      data = RelativeAffectedPeoplePos,
+      mapping  = aes(x, y),
+      svg      = svg_text_relative_affected,
+      size     = 3,
+      svg_width = 100
+    ) +
+    
+    ggsvg::geom_point_svg(
+      data = CommonAffectedPeoplePos,
+      mapping  = aes(x, y),
+      svg      = svg_text_affected,
+      size     = 3,
+      svg_width = 100
+    ) +
+
     geom_line(
       data = LinePos1,
       mapping = aes(x,y),
@@ -152,10 +176,9 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
     theme_void() +
     theme(legend.position = "none")
-
 }
 
-PopViz(NoPeople = 100,
+PopViz(NoPeople = 50,
        DesireEvent = TRUE,
        # OutcomeName = "Outcome",
        TreatmentName = "Treatment",
@@ -163,7 +186,7 @@ PopViz(NoPeople = 100,
        OutcomeType = "RD",
        ComProb = 0.5,
        ComConfInt = c(0.4, 0.6),
-       RelEff = 0,
+       RelEff = 0.2,
        RelConfInt = c(0.1, 0.3),
-       )
+)
 
