@@ -3,11 +3,11 @@ Type: Package
 Title: Absolute Effects Visualisation Using People
 Version: 0.1.0
 Authors@R: c(
-    person("Clareece", "Nevill"),
-    person("Nathan", "Green"),
-    person("Janion", "Nevill"),
-    person("Will", "Robinson"),
-    person("CRSU", "CRSU", role = c("maintainer"), email = "apps@crsu.org.uk")
+    person("Clareece", "Nevill", role = "aut"),
+    person("Nathan", "Green", role = "aut"),
+    person("Janion", "Nevill", role = "aut"),
+    person("Will", "Robinson", role = "aut"),
+    person("CRSU", role = "cre", email = "apps@crsu.org.uk")
     )
 Maintainer: CRSU <apps@crsu.org.uk>
 Description: Show abolsute effects of a treatment using coloured people.
