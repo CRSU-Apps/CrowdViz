@@ -111,6 +111,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
               width = 0.01) +
     scale_fill_continuous(low="white", high="black") +
     
+    # All people in base colour
     ggsvg::geom_point_svg(
       data = AllPeoplePos,
       mapping  = aes(x, y),
@@ -118,6 +119,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       size     = 3
     ) +
     
+    # People showing relative effect, from zero, up to maximum of
+    # comparator or treatment
     ggsvg::geom_point_svg(
       data = RelativeAffectedPeoplePos,
       mapping  = aes(x, y),
@@ -126,6 +129,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       svg_width = 100
     ) +
     
+    # People showing common effect, from zero, up to minimum of
+    # comparator or treatment
     ggsvg::geom_point_svg(
       data = CommonAffectedPeoplePos,
       mapping  = aes(x, y),
