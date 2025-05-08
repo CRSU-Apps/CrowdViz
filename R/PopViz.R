@@ -1,4 +1,4 @@
-library(ggplot2)
+#' @include zzz.R
 
 #' Create a population visualisation for absolute effects.
 #'
@@ -28,7 +28,6 @@ library(ggplot2)
 #' )
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
-
   if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
@@ -109,15 +108,14 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
 
 ## Dynamic Glyphing
   
-
   if (NoPeople <= 20) {
-    dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
+    dynamic_person_file <- person_solid
     dynamic_person_size <- 8
   } else if (20 < NoPeople & NoPeople <= 50) {
-    dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
+    dynamic_person_file <- person_narrow
     dynamic_person_size <- 5
   } else if (50 < NoPeople & NoPeople <= 100) {
-    dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
+    dynamic_person_file <- person_super_narrow
 	  dynamic_person_size <- 3
   } else {
     stop("Please specify 100 or fewer people")
