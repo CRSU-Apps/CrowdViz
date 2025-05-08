@@ -10,7 +10,6 @@ library(ggplot2)
   # RelEff = Relative effect point estimate calculated from meta-analysis
   # RelConfInt = Relative effect confidence interval <c(a,b)>
   # ComProb = Probability of event in comparator group
-  # ComConfInt = Confidence interval of probability of event in comparator group
 
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
@@ -18,21 +17,21 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
-    TrtConfInt <- ComConfInt + RelConfInt
+    TrtConfInt <- ComProb + RelConfInt
 
   }
 
   if (OutcomeType == "RR") {
 
     TrtProb <- ComProb * RelEff
-    TrtConfInt <- ComConfInt * RelConfInt
+    TrtConfInt <- ComProb * RelConfInt
 
   }
 
   if (OutcomeType == "OR") {
 
     TrtProb <- (ComProb * RelEff) / (1 - ComProb + ComProb * RelEff)
-    TrtConfInt <- (ComConfInt * RelConfInt) / (1 - ComConfInt + ComConfInt * RelConfInt)
+    TrtConfInt <- (ComProb * RelConfInt) / (1 - ComProb + ComProb * RelConfInt)
 
   }
 
@@ -45,6 +44,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = rep(1, NoPeople)
   )
 
+  # horizontal lines
   common_affected_person_count = min(TrtCount, ComCount)
   CommonAffectedPeoplePos <- data.frame(
     x = seq(0, person_spacing * (common_affected_person_count - 1), length = common_affected_person_count),
@@ -67,6 +67,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = c(1.25, 1.25)
   )
 
+  # tick marks
+  # rounding down to the nearest person
   LinePos3 <- data.frame(
     x = c( (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
            (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1))
@@ -82,6 +84,13 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   )
 
 
+  tile_dat <-
+    data.frame(
+      x = seq(1, 0, length.out = 1000),
+      y = LinePos1$y[1]) |>
+    dplyr::mutate(
+      dens = dnorm(x, LinePos3$x[1], 0.05)
+    )
 
 
   svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
@@ -94,13 +103,25 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   }
 
 
+
   plot <- ggplot() +
+
+    geom_tile(data = tile_dat,
+              aes(x = x, y = y, fill = dens),
+              height = 0.1,
+              width = 0.01) +
+    scale_fill_continuous(low="white", high="black") +
+
+    # All people in base colour
     ggsvg::geom_point_svg(
       data = AllPeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text_base,
       size     = 3
     ) +
+
+    # People showing relative effect, from zero, up to maximum of
+    # comparator or treatment
     ggsvg::geom_point_svg(
       data = RelativeAffectedPeoplePos,
       mapping  = aes(x, y),
@@ -108,6 +129,9 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       size     = 3,
       svg_width = 100
     ) +
+
+    # People showing common effect, from zero, up to minimum of
+    # comparator or treatment
     ggsvg::geom_point_svg(
       data = CommonAffectedPeoplePos,
       mapping  = aes(x, y),
@@ -133,7 +157,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       data = LinePos3,
       mapping = aes(x,y),
       linewidth = 1.5,
-      colour = "blue"
+      colour = "white"
     ) +
 
     geom_line(
@@ -153,10 +177,15 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
 
     annotate("text",
+             label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
+             x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.58,
+             size = 3.2) +
+
+    annotate("text",
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
 
-    theme_void()
+    theme_void() + theme(legend.position = "none")
 
     # # Dynamic default title
 
@@ -201,6 +230,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     }
 
   return(plot)
+
 }
 
 PopViz(NoPeople = 50,
@@ -213,5 +243,5 @@ PopViz(NoPeople = 50,
        ComConfInt = c(0.4, 0.6),
        RelEff = -0.3,
        RelConfInt = c(0.1, 0.3),
-       )
+)
 

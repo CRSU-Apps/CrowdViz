@@ -97,7 +97,6 @@ ggdenstrip <- function(dat = NA,   # sample data
     ggplot(df, aes(x = x, y = y)) +
     geom_tile(aes(fill = dens), height = width,
               width = width) +
-      scale_fill_identity() +
       scale_fill_continuous(low=colmin, high=colmax) +
       theme_void() +
       theme(
