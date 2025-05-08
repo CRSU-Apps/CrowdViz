@@ -1,6 +1,8 @@
 #' @include zzz.R
 NULL
 
+library(ggplot2)
+
 #' @description
 #' Create a population visualisation for absolute effects
 #'  
@@ -30,6 +32,9 @@ NULL
 #' )
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
+  
+  library(ggplot2)
+  
   if (OutcomeType == "RD") {
 
     TrtProb <- ComProb + RelEff
