@@ -1,5 +1,8 @@
 #' @include zzz.R
 NULL
+
+library(ggplot2)
+
 #' @description
 #' Create a population visualisation for absolute effects
 #'  
