@@ -17,8 +17,8 @@ BugReports: https://github.com/CRSU-Apps/PopViz/issues
 Encoding: UTF-8
 Language: en-UK
 Imports:
-    ggplot2,
     dplyr,
+    ggplot2,
     glue,
     stringr,
     readtext,
