@@ -1,0 +1,25 @@
+Package: PopViz
+Type: Package
+Title: Absolute Effects Visualisation Using People
+Version: 0.1.0
+Authors@R: c(
+    person("Clareece", "Nevill"),
+    person("Nathan", "Green"),
+    person("Janion", "Nevill"),
+    person("Will", "Robinson"),
+    person("CRSU", "CRSU", role = c("maintainer"), email = "apps@crsu.org.uk")
+    )
+Maintainer: CRSU <apps@crsu.org.uk>
+Description: Show abolsute effects of a treatment using coloured people.
+License: GPL 3.0 + file LICENSE
+URL: https://github.com/CRSU-Apps/PopViz
+BugReports: https://github.com/CRSU-Apps/PopViz/issues
+Encoding: UTF-8
+Language: en-UK
+Imports:
+    ggplot2,
+    dplyr,
+    glue,
+    stringr,
+    ggsvg
+RoxygenNote: 7.3.2

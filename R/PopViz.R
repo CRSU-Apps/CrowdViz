@@ -11,6 +11,33 @@ library(ggplot2)
   # RelConfInt = Relative effect confidence interval <c(a,b)>
   # ComProb = Probability of event in comparator group
 
+#' Create a population visualisation for absolute effects.
+#'
+#' @param NoPeople Number of people to display
+#' @param DesireEvent TRUE if events are desired, else FALSE
+#' @param OutcomeName Name of event being measured
+#' @param TreatmentName Name of intervention being compared
+#' @param ComparatorName Name of reference intervention
+#' @param OutcomeType Type of outcome being measured
+#' @param RelEff Point estimate of relative effect
+#' @param RelConfInt Vector of lower and upper limits of confidence interval of relative effect
+#' @param ComProb Probability of event in reference intervention
+#' @param ComConfInt Vector of lower and upper limits of confidence interval of relative effect
+#'
+#' @return ggplot2 plot object
+#' @export
+#'
+#' @examples
+#' PopViz(NoPeople = 50,
+#' DesireEvent = FALSE,
+#' OutcomeName = "Adverse Effects",
+#' TreatmentName = "Treatment",
+#' ComparatorName = "Standard Care",
+#' OutcomeType = "RD",
+#' ComProb = 0.5,
+#' RelEff = 0.2,
+#' RelConfInt = c(0.1, 0.3)
+#' )
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt) {
 
@@ -196,6 +223,6 @@ PopViz(NoPeople = 50,
        OutcomeType = "RD",
        ComProb = 0.5,
        RelEff = 0.2,
-       RelConfInt = c(0.1, 0.3),
+       RelConfInt = c(0.1, 0.3)
 )
 
