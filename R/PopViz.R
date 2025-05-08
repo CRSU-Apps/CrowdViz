@@ -91,7 +91,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       dens = dnorm(x, LinePos3$x[1], 0.05)
     )
   
-  svg_text <- .GetSvgText()
+  svg_text <- GetSvgText()
   
   svg_text_base <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#444444")
   svg_text_affected <- GetSvgText(filename = "svgs/person-super-narrow.svg", colour = "#ffaa00")
@@ -174,6 +174,11 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     annotate("text",
              label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
+    
+    annotate("text",
+             label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
+             x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.58,
+             size = 3.2) +
 
     annotate("text",
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
@@ -190,7 +195,6 @@ PopViz(NoPeople = 50,
        ComparatorName = "Standard Care",
        OutcomeType = "RD",
        ComProb = 0.5,
-       ComConfInt = c(0.4, 0.6),
        RelEff = 0.2,
        RelConfInt = c(0.1, 0.3),
 )
