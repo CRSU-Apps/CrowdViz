@@ -58,6 +58,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = rep(1, NoPeople)
   )
 
+  # horizontal lines
   LinePos1 <- data.frame(
    x = c(0, 1),
    y = c(0.75, 0.75)
@@ -68,6 +69,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = c(1.25, 1.25)
   )
 
+  # tick marks
+  # rounding down to the nearest person
   LinePos3 <- data.frame(
     x = c( (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
            (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1))
@@ -81,25 +84,39 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     ),
     y = c(1.275, 1.225)
   )
-
-
-
+  
+  tile_dat <- 
+    data.frame(
+      x = seq(1, 0, length.out = 1000),
+      y = LinePos1$y[1]) |> 
+    dplyr::mutate(
+      dens = dnorm(x, LinePos3$x[1], 0.05)
+    )
+  
   svg_text <- .GetSvgText()
+  
   ggplot() +
+    
+    geom_tile(data = tile_dat,
+              aes(x = x, y = y, fill = dens),
+              height = 0.1,
+              width = 0.01) +
+    scale_fill_continuous(low="white", high="black") +
+    
     ggsvg::geom_point_svg(
       data = PeoplePos,
       mapping  = aes(x, y),
       svg      = svg_text,
       size     = 3
     ) +
-
+    
     geom_line(
       data = LinePos1,
       mapping = aes(x,y),
       linewidth = 1.5,
       colour = "blue"
-    ) +
-
+    ) + 
+  
     geom_line(
       data = LinePos2,
       mapping = aes(x,y),
@@ -110,7 +127,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       data = LinePos3,
       mapping = aes(x,y),
       linewidth = 1.5,
-      colour = "blue"
+      colour = "white"
     ) +
 
     geom_line(
@@ -133,9 +150,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
              label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
              x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
 
-
-
-    theme_void()
+    theme_void() +
+    theme(legend.position = "none")
 
 }
 
@@ -147,7 +163,7 @@ PopViz(NoPeople = 100,
        OutcomeType = "RD",
        ComProb = 0.5,
        ComConfInt = c(0.4, 0.6),
-       RelEff = 0.2,
+       RelEff = 0,
        RelConfInt = c(0.1, 0.3),
        )
 
