@@ -29,7 +29,7 @@ GetSvgFilename <- function(NoPeople) {
 #' GetSvgText()
 #' GetSvgText("cat.svg")
 #' GetSvgText("cat.svg", 0.2, 0.8)
-GetSvgText <- function(filename="svgs/person-super-narrow.svg", colour="#000000", start_proportion=0, end_proportion=1) {
+GetSvgText <- function(filename=system.file("person-super-narrow.svg", package="PopViz"), colour="#000000", start_proportion=0, end_proportion=1) {
   raw_svg_text <- readtext::readtext(filename)$text |>
     stringr::str_replace_all("\n\\s*", " ")
 
