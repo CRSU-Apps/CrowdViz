@@ -2,8 +2,6 @@
 
 #' Get text content from an SVG file, and modify with the given styling.
 #'
-#' @include zzz.R
-
 #' @param filename Name of file from which to read text. Defaults to "person-solid.svg"
 #' @param colour Hexidecimal colour to set on all paths within the svg. Defaults to "#000000"
 #' @param start_proportion Proportion by which to truncate the left side of the image. Defaults to 0
