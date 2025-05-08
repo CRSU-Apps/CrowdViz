@@ -27,7 +27,7 @@ Remotes:
     coolbutuseless/ggsvg
 RoxygenNote: 7.3.2
 Collate: 
-    'zzz.R'
     'GetSvgText.R'
     'MA_object_extraction.R'
+    'zzz.R'
     'PopViz.R'
