@@ -1,8 +1,12 @@
+library(ggplot2)
+
 person_solid <- file.path("inst","person-solid.svg")
 person_narrow <- file.path("inst","person-narrow.svg")
 person_super_narrow <- file.path("inst","person-super-narrow.svg")
 
 .onLoad <- function (libname, pkgname) {
+  library(ggplot2)
+  
   ns <- topenv()
   #assign("person_solid",system.file("person-solid.svg", package = "PopViz"), envir = topenv())
   ns$person_solid <- system.file("person-solid.svg", package = "PopViz")
