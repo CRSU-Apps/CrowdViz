@@ -65,7 +65,7 @@ PopViz <- function(
     ylim(0, 2) +
     xlim(0, 1.2) +
     theme_void() +
-    theme(legend.position = "none")
+    theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
   
   plot <- .PlotConfidenceInterval(plot, treatment_probability, treatment_confidence_interval)
   plot <- .PlotAxes(plot, person_count, reference_person_count, treatment_person_count, person_spacing, reference_name, treatment_name, treatment_probability, reference_probability, treatment_confidence_interval)
@@ -338,8 +338,7 @@ PopViz <- function(
   
   if (!is.null(title)) {
     plot <- plot +
-      ggtitle(label = title) +
-      theme(plot.title = element_text(hjust = 0.5))
+      ggtitle(label = title)
     
     return(plot)
   }
@@ -363,8 +362,7 @@ PopViz <- function(
           ),
           width = 60
         )
-      ) +
-      theme(plot.title = element_text(hjust = 0.5))
+      )
   } else if (treatment_probability == reference_probability) {
     plot <- plot +
       ggtitle(
@@ -382,8 +380,7 @@ PopViz <- function(
           ),
           width = 60
         )
-      ) +
-      theme(plot.title = element_text(hjust = 0.5))
+      )
   } else if (treatment_probability < reference_probability) {
     plot <- plot +
       ggtitle(
@@ -403,8 +400,7 @@ PopViz <- function(
           ),
           width = 60
         )
-      ) +
-      theme(plot.title = element_text(hjust = 0.5))
+      )
   }
   
   return(plot)
