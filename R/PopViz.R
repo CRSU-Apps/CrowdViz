@@ -1,5 +1,3 @@
-library(ggplot2)
-
 #' Create a population visualisation for absolute effects.
 #'
 #' @param NoPeople Number of people to display
@@ -31,28 +29,31 @@ library(ggplot2)
 #'   RelEff = 0.2,
 #'   RelConfInt = c(0.1, 0.3)
 #' )
-PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
-                   OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
+PopViz <- function(
+    NoPeople,
+    DesireEvent,
+    OutcomeName,
+    TreatmentName,
+    ComparatorName,
+    OutcomeType,
+    RelEff,
+    RelConfInt,
+    ComProb,
+    ComConfInt,
+    Title=NULL
+    ) {
 
   if (OutcomeType == "RD") {
-
     TrtProb <- ComProb + RelEff
     TrtConfInt <- ComProb + RelConfInt
-
-  }
-
-  if (OutcomeType == "RR") {
-
+  } else if (OutcomeType == "RR") {
     TrtProb <- ComProb * RelEff
     TrtConfInt <- ComProb * RelConfInt
-
-  }
-
-  if (OutcomeType == "OR") {
-
+  } else if (OutcomeType == "OR") {
     TrtProb <- (ComProb * RelEff) / (1 - ComProb + ComProb * RelEff)
     TrtConfInt <- (ComProb * RelConfInt) / (1 - ComProb + ComProb * RelConfInt)
-
+  } else {
+    stop(glue::glue("Outcome type'{OutcomeType}' not supported. Please use one of ['RD', 'RR', 'OR']"))
   }
 
   TrtCount = round(NoPeople * TrtProb)
@@ -64,7 +65,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = rep(1, NoPeople)
   )
 
-  # horizontal lines
+  # Horizontal lines
   common_affected_person_count = min(TrtCount, ComCount)
   CommonAffectedPeoplePos <- data.frame(
     x = seq(0, person_spacing * (common_affected_person_count - 1), length = common_affected_person_count),
@@ -87,8 +88,8 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = c(1.25, 1.25)
   )
 
-  # tick marks
-  # rounding down to the nearest person
+  # Tick marks
+  # Rounding down to the nearest person
   LinePos3 <- data.frame(
     x = c( (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
            (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1))
@@ -103,7 +104,6 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     y = c(1.275, 1.225)
   )
 
-
   tile_dat <-
     data.frame(
       x = seq(1, 0, length.out = 1000),
@@ -113,8 +113,6 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     )
 
 ## Dynamic Glyphing
-  
-
   if (NoPeople <= 20) {
     dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
     dynamic_person_size <- 8
@@ -128,7 +126,6 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
     stop("Please specify 100 or fewer people")
   }
   
-  
   svg_text_base <- GetSvgText(filename = dynamic_person_file, colour = "#444444")
   svg_text_affected <- GetSvgText(filename = dynamic_person_file, colour = "#ffaa00")
 
@@ -137,8 +134,6 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
   } else {
     svg_text_relative_affected <- GetSvgText(filename = dynamic_person_file, colour = "#ff0000")
   }
-
-
 
   plot <- ggplot() +
 
@@ -156,8 +151,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       size     = dynamic_person_size
     ) +
 
-    # People showing relative effect, from zero, up to maximum of
-    # comparator or treatment
+    # People showing relative effect, from zero, up to maximum of comparator or treatment
     ggsvg::geom_point_svg(
       data = RelativeAffectedPeoplePos,
       mapping  = aes(x, y),
@@ -165,8 +159,7 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       size     = dynamic_person_size
     ) +
 
-    # People showing common effect, from zero, up to minimum of
-    # comparator or treatment
+    # People showing common effect, from zero, up to minimum of comparator or treatment
     ggsvg::geom_point_svg(
       data = CommonAffectedPeoplePos,
       mapping  = aes(x, y),
@@ -200,73 +193,103 @@ PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, Comparator
       linewidth = 1.5,
     ) +
 
-    ylim(0, 2) + xlim(0, 1.2) +
+    ylim(0, 2) +
+    xlim(0, 1.2) +
 
     annotate("text", x = 1.11, y = 0.75, label = TreatmentName) +
-
     annotate("text", x = 1.11, y = 1.25, label = ComparatorName) +
 
-    annotate("text",
-             label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
-             x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.65) +
+    annotate(
+      "text",
+      label = paste0(round(NoPeople*TrtProb,0), " out of ", NoPeople),
+      x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
+      y = 0.65
+    ) +
 
-    annotate("text",
-             label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
-             x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)), y = 0.58,
-             size = 3.2) +
+    annotate(
+      "text",
+      label = paste0("95% CI: ", round(NoPeople*TrtConfInt[1], 0), " to ", round(NoPeople*TrtConfInt[2], 0)),
+      x = (2 * round(NoPeople * TrtProb, 0) - 1) / (2 * (NoPeople - 1)),
+      y = 0.58,
+      size = 3.2
+    ) +
 
-    annotate("text",
-             label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
-             x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)), y = 1.35) +
+    annotate(
+      "text",
+      label = paste0(round(NoPeople*ComProb,0), " out of ", NoPeople),
+      x = (2 * round(NoPeople * ComProb, 0) - 1) / (2 * (NoPeople - 1)),
+      y = 1.35
+    ) +
 
-    theme_void() + theme(legend.position = "none")
+    theme_void() +
+    theme(legend.position = "none")
 
     # # Dynamic default title
 
     if (is.null(Title)) {
-
       if (TrtProb > ComProb) {
-        plot <- plot + ggtitle(label = stringr::str_wrap(
-                                      paste0("In a group of ", NoPeople, " People, ",
-                                      TreatmentName, " increases the number of ",
-                                      OutcomeName, " by ",
-                                      (round(NoPeople*TrtProb,0)) -
-                                      (round(NoPeople*ComProb,0)), " on average ",
-                                      "compared to ", ComparatorName),
-                                      60)
-                                     ) +
+        plot <- plot +
+          ggtitle(
+            label = stringr::str_wrap(
+              paste0(
+                "In a group of ",
+                NoPeople,
+                " People, ",
+                TreatmentName,
+                " increases the number of ",
+                OutcomeName,
+                " by ",
+                round(NoPeople*TrtProb,0) - round(NoPeople*ComProb,0),
+                " on average ",
+                "compared to ",
+                ComparatorName
+              ),
+              width = 60
+            )
+          ) +
           theme(plot.title = element_text(hjust = 0.5))
-      }
-
-       if (TrtProb == ComProb) {
-         plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
-                                               TreatmentName, " does not change the number of ",
-                                               OutcomeName, " on average ",
-                                               "compared to ", ComparatorName)
-         ) +
+      } else if (TrtProb == ComProb) {
+         plot <- plot +
+           ggtitle(
+             label = paste0(
+               "In a group of ",
+               NoPeople,
+               " People, ",
+               TreatmentName,
+               " does not change the number of ",
+               OutcomeName,
+               " on average ",
+               "compared to ",
+               ComparatorName
+             )
+           ) +
            theme(plot.title = element_text(hjust = 0.5))
-      }
-
-      if (TrtProb < ComProb) {
-        plot <- plot + ggtitle(label = paste0("In a group of ", NoPeople, " People, ",
-                                              TreatmentName, " decreases the number of ",
-                                              OutcomeName, " by ",
-                                              (round(NoPeople*ComProb,0)) -
-                                                (round(NoPeople*TrtProb,0)), " on average ",
-                                              "compared to ", ComparatorName)
-        ) +
+      } else if (TrtProb < ComProb) {
+        plot <- plot +
+          ggtitle(
+            label = paste0(
+              "In a group of ",
+              NoPeople,
+              " People, ",
+              TreatmentName,
+              " decreases the number of ",
+              OutcomeName,
+              " by ",
+              round(NoPeople*ComProb,0) - round(NoPeople*TrtProb,0),
+              " on average ",
+              "compared to ",
+              ComparatorName
+            )
+          ) +
           theme(plot.title = element_text(hjust = 0.5))
       }
-
     } else {
-
-      plot <- plot + ggtitle(label=Title) +
+      plot <- plot +
+        ggtitle(label=Title) +
         theme(plot.title = element_text(hjust = 0.5))
-
     }
 
   return(plot)
-
 }
 
 PopViz(NoPeople = 5,

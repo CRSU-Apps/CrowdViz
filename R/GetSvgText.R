@@ -1,20 +1,3 @@
-
-GetSvgFilename <- function(NoPeople) {
-
-  if (NoPeople) {
-
-  }
-
-}
-
-
-
-
-
-
-
-
-
 #' Get text content from an SVG file, and modify with the given styling.
 #'
 #' @param filename Name of file from which to read text. Defaults to "person-solid.svg"

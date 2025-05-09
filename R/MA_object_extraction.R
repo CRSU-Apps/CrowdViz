@@ -1,10 +1,6 @@
-## Functions for extracting relevant data from meta-analysis functions ##
-
-# {metafor} object extraction (rma.uni)
-
-#' Title
+#' Get PopViz data from {metafor} object (rma.uni).
 #'
-#' @param model 
+#' @param model Metafor analysis object from which to get PopViz data
 #'
 #' @return List of plot options:
 #' - "relative_effect": Point estimate of relative effect
@@ -29,11 +25,28 @@ ExtractMetafor <- function(model) {
   )
 }
 
-# {MetaStan} object extraction (meta_stan)
-
+#' Get PopViz data from {MetaStan} object (meta_stan)
+#'
+#' @param model MetaStan analysis object from which to get PopViz data
+#'
+#' @return List of plot options:
+#' - "relative_effect": Point estimate of relative effect
+#' - "confidence_interval": vector of lower and upper limits of confidence interval of relative effect
+#' - "outcome_type": Type of outcome of analysis
+#' @export
+#'
+#' @examples
+#' ExtractMetaStan(metastan_model)
 ExtractMetaStan <- function(model) {
   
   RelEff <- model$fit_sum['theta', c(1)]
   RelConfInt <- model$fit_sum['theta', c(4,8)]
   # To be confirmed once we understand MetaStan better
+  return(
+    list(
+      relative_effect = RelEff,
+      confidence_interval = RelConfInt,
+      outcome_type = c(NA, NA)
+    )
+  )
 }
