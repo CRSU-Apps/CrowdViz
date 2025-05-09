@@ -44,14 +44,17 @@ ggplot2 plot object
 Create a population visualisation for absolute effects.
 }
 \examples{
-PopViz(NoPeople = 50,
-DesireEvent = FALSE,
-OutcomeName = "Adverse Effects",
-TreatmentName = "Treatment",
-ComparatorName = "Standard Care",
-OutcomeType = "RD",
-ComProb = 0.5,
-RelEff = 0.2,
-RelConfInt = c(0.1, 0.3)
+library(ggplot2)
+
+PopViz::PopViz(
+  NoPeople = 50,
+  DesireEvent = FALSE,
+  OutcomeName = "Adverse Effects",
+  TreatmentName = "Treatment",
+  ComparatorName = "Standard Care",
+  OutcomeType = "RD",
+  ComProb = 0.5,
+  RelEff = 0.2,
+  RelConfInt = c(0.1, 0.3)
 )
 }

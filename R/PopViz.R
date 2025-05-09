@@ -18,15 +18,18 @@ library(ggplot2)
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_continuous geom_line xlim ylim annotate theme_void theme ggtitle element_text
 #'
 #' @examples
-#' PopViz(NoPeople = 50,
-#' DesireEvent = FALSE,
-#' OutcomeName = "Adverse Effects",
-#' TreatmentName = "Treatment",
-#' ComparatorName = "Standard Care",
-#' OutcomeType = "RD",
-#' ComProb = 0.5,
-#' RelEff = 0.2,
-#' RelConfInt = c(0.1, 0.3)
+#' library(ggplot2)
+#' 
+#' PopViz::PopViz(
+#'   NoPeople = 50,
+#'   DesireEvent = FALSE,
+#'   OutcomeName = "Adverse Effects",
+#'   TreatmentName = "Treatment",
+#'   ComparatorName = "Standard Care",
+#'   OutcomeType = "RD",
+#'   ComProb = 0.5,
+#'   RelEff = 0.2,
+#'   RelConfInt = c(0.1, 0.3)
 #' )
 PopViz <- function(NoPeople, DesireEvent, OutcomeName, TreatmentName, ComparatorName,
                    OutcomeType, RelEff, RelConfInt, ComProb, ComConfInt, Title=NULL) {
