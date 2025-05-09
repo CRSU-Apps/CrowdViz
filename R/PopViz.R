@@ -1,14 +1,14 @@
 #' Create a population visualisation for absolute effects.
 #'
-#' @param NoPeople Number of people to display
-#' @param DesireEvent TRUE if events are desired, else FALSE
-#' @param OutcomeName Name of event being measured
-#' @param TreatmentName Name of intervention being compared
-#' @param ComparatorName Name of reference intervention
-#' @param OutcomeType Type of outcome being measured
-#' @param RelEff Point estimate of relative effect
-#' @param RelConfInt Vector of lower and upper limits of confidence interval of relative effect
-#' @param ComProb Probability of event in reference intervention
+#' @param person_count Number of people to display
+#' @param event_desired TRUE if events are desired, else FALSE
+#' @param outcome_name Name of event being measured
+#' @param reference_name Name of reference intervention
+#' @param treatment_name Name of intervention being compared
+#' @param outcome_type Type of outcome being measured
+#' @param reference_probability Probability of event in reference intervention
+#' @param relative_effect Point estimate of relative effect
+#' @param relative_confidence_interval Vector of lower and upper limits of confidence interval of relative effect
 #'
 #' @return ggplot2 plot object
 #' @export
@@ -16,14 +16,15 @@
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_continuous geom_line xlim ylim annotate theme_void theme ggtitle element_text
 #'
 #' @examples
+#' # For some reason, {ggplot2} must be loaded explicitly
 #' library(ggplot2)
 #' 
 #' PopViz::PopViz(
 #'   person_count = 5,
 #'   event_desired = FALSE,
 #'   outcome_name = "Adverse Events",
-#'   treatment_name = "Treatment",
 #'   reference_name = "Standard Care",
+#'   treatment_name = "Treatment",
 #'   outcome_type = "RD",
 #'   reference_probability = 0.5,
 #'   relative_effect = 0.3,
@@ -33,12 +34,12 @@ PopViz <- function(
     person_count,
     event_desired,
     outcome_name,
-    treatment_name,
     reference_name,
+    treatment_name,
     outcome_type,
+    reference_probability,
     relative_effect,
     relative_confidence_interval,
-    reference_probability,
     title=NULL
     ) {
 
@@ -69,11 +70,25 @@ PopViz <- function(
   plot <- .PlotConfidenceInterval(plot, treatment_probability, treatment_confidence_interval)
   plot <- .PlotAxes(plot, person_count, reference_person_count, treatment_person_count, person_spacing, reference_name, treatment_name, treatment_probability, reference_probability, treatment_confidence_interval)
   plot <- .PlotGlyphs(plot, person_count, reference_person_count, treatment_person_count, person_spacing, event_desired)
-  plot <- .PlotTitle(plot, title, person_count, outcome_name, treatment_name, reference_name, treatment_probability, reference_probability)
+  plot <- .PlotTitle(plot, title, person_count, outcome_name, reference_name, treatment_name, reference_probability, treatment_probability)
   
   return(plot)
 }
 
+#' Plot the axes, ticks and labels
+#'
+#' @param plot {ggplot2} object to which to add elements
+#' @param person_count Number of people being rendered
+#' @param reference_person_count Number of people affected by the reference
+#' @param treatment_person_count number of people affected by the treatment
+#' @param person_spacing Spacing between people
+#' @param reference_name Name of reference
+#' @param treatment_name NAme of treatment
+#' @param treatment_probability Probability of treatment affecting a person
+#' @param reference_probability Probability of reference affecting a person
+#' @param treatment_confidence_interval Confidence interval of treatment effect
+#'
+#' @return {ggplot2} object
 .PlotAxes <- function(
     plot,
     person_count,
@@ -173,6 +188,16 @@ PopViz <- function(
   return(plot)
 }
 
+#' Render the people on the plot.
+#'
+#' @param plot {ggplot2} object to which to add elements
+#' @param person_count Number of people being rendered
+#' @param reference_person_count Number of people affected by the reference
+#' @param treatment_person_count number of people affected by the treatment
+#' @param person_spacing Spacing between people
+#' @param event_desired 
+#'
+#' @return {ggplot2} object
 .PlotGlyphs <- function(plot, person_count, reference_person_count, treatment_person_count, person_spacing, event_desired) {
   all_people_positions <- data.frame(
     x = seq(0, 1, length = person_count),
@@ -228,6 +253,13 @@ PopViz <- function(
   return(plot)
 }
 
+#' Get the glyph file based on the number of people on the plot.
+#'
+#' @param person_count The number of people on the plot
+#'
+#' @return List containing:
+#' - "filename": The path to the glyph file
+#' - "size": the size of the glyph to be rendered
 .GetGlyphFile <- function(person_count) {
   if (person_count <= 20) {
     dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
@@ -250,6 +282,13 @@ PopViz <- function(
   )
 }
 
+#' Plot the conifdence interval gradient.
+#'
+#' @param plot {ggplot2} object to which to add elements
+#' @param treatment_probability Probability of treatment affecting a person
+#' @param treatment_confidence_interval Confidence interval of treatment effect
+#'
+#' @return {ggplot2} object
 .PlotConfidenceInterval <- function(plot, treatment_probability, treatment_confidence_interval) {
   tile_data <- data.frame(
     x = seq(1, 0, length.out = 1000),
@@ -274,15 +313,27 @@ PopViz <- function(
   return(plot)
 }
 
+#' Add the title to the plot.
+#'
+#' @param plot {ggplot2} object to which to add elements
+#' @param title Title of the plot. Can be `NULL` if non specified
+#' @param person_count Number of people being rendered
+#' @param outcome_name Name of event being measured
+#' @param reference_name Name of reference
+#' @param treatment_name Name of treatment
+#' @param reference_probability Probability of reference affecting a person
+#' @param treatment_probability Probability of treatment affecting a person
+#'
+#' @return {ggplot2} object
 .PlotTitle <- function(
     plot,
     title,
     person_count,
     outcome_name,
-    treatment_name,
     reference_name,
-    treatment_probability,
-    reference_probability
+    treatment_name,
+    reference_probability,
+    treatment_probability
     ) {
   
   if (!is.null(title)) {

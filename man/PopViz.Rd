@@ -5,37 +5,36 @@
 \title{Create a population visualisation for absolute effects.}
 \usage{
 PopViz(
-  NoPeople,
-  DesireEvent,
-  OutcomeName,
-  TreatmentName,
-  ComparatorName,
-  OutcomeType,
-  RelEff,
-  RelConfInt,
-  ComProb,
-  ComConfInt,
-  Title = NULL
+  person_count,
+  event_desired,
+  outcome_name,
+  reference_name,
+  treatment_name,
+  outcome_type,
+  reference_probability,
+  relative_effect,
+  relative_confidence_interval,
+  title = NULL
 )
 }
 \arguments{
-\item{NoPeople}{Number of people to display}
+\item{person_count}{Number of people to display}
 
-\item{DesireEvent}{TRUE if events are desired, else FALSE}
+\item{event_desired}{TRUE if events are desired, else FALSE}
 
-\item{OutcomeName}{Name of event being measured}
+\item{outcome_name}{Name of event being measured}
 
-\item{TreatmentName}{Name of intervention being compared}
+\item{reference_name}{Name of reference intervention}
 
-\item{ComparatorName}{Name of reference intervention}
+\item{treatment_name}{Name of intervention being compared}
 
-\item{OutcomeType}{Type of outcome being measured}
+\item{outcome_type}{Type of outcome being measured}
 
-\item{RelEff}{Point estimate of relative effect}
+\item{reference_probability}{Probability of event in reference intervention}
 
-\item{RelConfInt}{Vector of lower and upper limits of confidence interval of relative effect}
+\item{relative_effect}{Point estimate of relative effect}
 
-\item{ComProb}{Probability of event in reference intervention}
+\item{relative_confidence_interval}{Vector of lower and upper limits of confidence interval of relative effect}
 }
 \value{
 ggplot2 plot object
@@ -44,17 +43,18 @@ ggplot2 plot object
 Create a population visualisation for absolute effects.
 }
 \examples{
+# For some reason, {ggplot2} must be loaded explicitly
 library(ggplot2)
 
 PopViz::PopViz(
-  NoPeople = 50,
-  DesireEvent = FALSE,
-  OutcomeName = "Adverse Effects",
-  TreatmentName = "Treatment",
-  ComparatorName = "Standard Care",
-  OutcomeType = "RD",
-  ComProb = 0.5,
-  RelEff = 0.2,
-  RelConfInt = c(0.1, 0.3)
+  person_count = 5,
+  event_desired = FALSE,
+  outcome_name = "Adverse Events",
+  reference_name = "Standard Care",
+  treatment_name = "Treatment",
+  outcome_type = "RD",
+  reference_probability = 0.5,
+  relative_effect = 0.3,
+  relative_confidence_interval = c(0.1, 0.5)
 )
 }
