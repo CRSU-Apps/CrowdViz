@@ -31,7 +31,8 @@
 #'   relative_confidence_interval = c(0.1, 0.5)
 #' )
 PopViz <- function(
-    person_count,
+    glyph_count,
+    person_multiplier = 1,
     event_desired,
     outcome_name,
     reference_name,
@@ -56,20 +57,22 @@ PopViz <- function(
     stop(glue::glue("Outcome type'{OutcomeType}' not supported. Please use one of ['RD', 'RR', 'OR']"))
   }
   
+  person_count = glyph_count * person_multiplier
+  
   reference_person_count = round(person_count * reference_probability)
   treatment_person_count = round(person_count * treatment_probability)
-  person_spacing = 1 / (person_count - 1)
+  person_spacing = 1 / (glyph_count - 1)
   
   # Plot formatting
   plot <- ggplot() +
-    ylim(0, 2) +
+    ylim(0.5, 1.5) +
     xlim(0, 1.2) +
     theme_void() +
     theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
   
   plot <- .PlotConfidenceInterval(plot, treatment_probability, treatment_confidence_interval)
-  plot <- .PlotAxes(plot, person_count, reference_person_count, treatment_person_count, person_spacing, reference_name, treatment_name, treatment_probability, reference_probability, treatment_confidence_interval)
-  plot <- .PlotGlyphs(plot, person_count, reference_person_count, treatment_person_count, person_spacing, event_desired)
+  plot <- .PlotAxes(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, reference_name, treatment_name, treatment_probability, reference_probability, treatment_confidence_interval)
+  plot <- .PlotGlyphs(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, event_desired)
   plot <- .PlotTitle(plot, title, person_count, outcome_name, reference_name, treatment_name, reference_probability, treatment_probability)
   
   return(plot)
@@ -91,7 +94,8 @@ PopViz <- function(
 #' @return {ggplot2} object
 .PlotAxes <- function(
     plot,
-    person_count,
+    glyph_count,
+    person_multiplier,
     reference_person_count,
     treatment_person_count,
     person_spacing,
@@ -112,8 +116,8 @@ PopViz <- function(
     y = c(0.75, 0.75)
   )
   
-  reference_tick_position_x = person_spacing * (reference_person_count - 0.5)
-  treatment_tick_position_x = person_spacing * (treatment_person_count - 0.5)
+  reference_tick_position_x = person_spacing * (reference_person_count / person_multiplier - 0.5)
+  treatment_tick_position_x = person_spacing * (treatment_person_count / person_multiplier - 0.5)
   
   # Tick marks, rounding to the nearest person
   reference_tick_position <- data.frame(
@@ -124,6 +128,8 @@ PopViz <- function(
     x = c(treatment_tick_position_x, treatment_tick_position_x),
     y = c(0.725, 0.7755)
   )
+  
+  person_count = glyph_count * person_multiplier
   
   # Reference axis, tick and label
   plot <- plot +
@@ -198,34 +204,38 @@ PopViz <- function(
 #' @param event_desired 
 #'
 #' @return {ggplot2} object
-.PlotGlyphs <- function(plot, person_count, reference_person_count, treatment_person_count, person_spacing, event_desired) {
+.PlotGlyphs <- function(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, event_desired) {
   all_people_positions <- data.frame(
-    x = seq(0, 1, length = person_count),
-    y = rep(1, person_count)
+    x = seq(0, 1, length = glyph_count),
+    y = rep(1, glyph_count)
   )
   
   common_affected_person_count = min(treatment_person_count, reference_person_count)
+  common_affected_glyph_count = as.integer(common_affected_person_count / person_multiplier)
   common_affected_person_positions <- data.frame(
-    x = seq(0, person_spacing * (common_affected_person_count - 1), length = common_affected_person_count),
-    y = rep(1, common_affected_person_count)
+    x = seq(0, person_spacing * (common_affected_glyph_count - 1), length = common_affected_glyph_count),
+    y = rep(1, common_affected_glyph_count)
   )
   
   relative_affected_person_count = max(treatment_person_count, reference_person_count)
+  relative_affected_glyph_count = as.integer(relative_affected_person_count / person_multiplier)
   relative_effected_person_positions <- data.frame(
-    x = seq(0, person_spacing * (relative_affected_person_count - 1), length = relative_affected_person_count),
-    y = rep(1, relative_affected_person_count)
+    x = seq(0, person_spacing * (relative_affected_glyph_count - 1), length = relative_affected_glyph_count),
+    y = rep(1, relative_affected_glyph_count)
   )
   
-  glyph_data <- .GetGlyphFile(person_count)
+  glyph_data <- .GetGlyphFile(glyph_count)
   
-  svg_text_base <- GetSvgText(filename = glyph_data$filename, colour = "#444444")
-  svg_text_affected <- GetSvgText(filename = glyph_data$filename, colour = "#ffaa00")
+  svg_text_raw <- ReadSvgText(filename = glyph_data$filename)
+  svg_text_base <- ModifySvgText(svg_text_raw, colour = "#444444")
+  svg_text_affected <- ModifySvgText(svg_text_raw, colour = "#ffaa00")
   
   if (xor(treatment_person_count < reference_person_count, event_desired)) {
-    svg_text_relative_affected <- GetSvgText(filename = glyph_data$filename, colour = "#00ff00")
+    relative_affected_colour <- "#00ff00"
   } else {
-    svg_text_relative_affected <- GetSvgText(filename = glyph_data$filename, colour = "#ff0000")
+    relative_affected_colour <- "#ff0000"
   }
+  svg_text_relative_affected <- ModifySvgText(svg_text_raw, colour = relative_affected_colour)
   
   plot <- plot +
     # All people in base colour
@@ -249,6 +259,53 @@ PopViz <- function(
       svg = svg_text_affected,
       size = glyph_data$size
     )
+  
+  # Plot partial people for relative effects
+  plot <- .PlotPartialPerson(
+    plot,
+    relative_affected_person_count,
+    person_multiplier,
+    person_spacing,
+    relative_affected_colour,
+    glyph_data$size,
+    svg_text_raw
+  )
+  # Plot partial people for common effects
+  plot <- .PlotPartialPerson(
+    plot,
+    common_affected_person_count,
+    person_multiplier,
+    person_spacing,
+    "#ffaa00",
+    glyph_data$size,
+    svg_text_raw
+  )
+  
+  return(plot)
+}
+
+.PlotPartialPerson <- function(plot, person_count, person_multiplier, person_spacing, glyph_colour, glyph_size, svg_text_raw) {
+  glyph_count = as.integer(person_count / person_multiplier)
+  proportion = (person_count / person_multiplier) %% 1
+  
+  if (proportion != 0) {
+    person_position <- data.frame(
+      x = person_spacing * glyph_count,
+      y = 1
+    )
+    
+    svg_text_partial <- ModifySvgText(svg_text_raw, colour = glyph_colour, end_proportion = proportion)
+    
+    plot <- plot +
+      # Partial person showing relative effect
+      ggsvg::geom_point_svg(
+        data = person_position,
+        mapping = aes(x, y),
+        svg = svg_text_partial,
+        size = glyph_size * proportion,
+        hjust = (1 - proportion) / (2 * proportion) + 0.5
+      )
+  }
   
   return(plot)
 }
