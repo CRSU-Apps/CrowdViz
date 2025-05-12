@@ -17,6 +17,14 @@
 #' - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
 #' - "common_effect" Colour for all glyphs affected by both the reference and the treatment
 #' Defaults to "auto"
+#' @param glyph Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+#' Builtin glyphs:
+#' - "person"
+#' - "person-narrow"
+#' - "person-super-narrow"
+#' - "person-dress"
+#' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
+#' Defaults to NULL where the size is chosen based on `glyph`
 #'
 #' @return ggplot2 plot object
 #' @export
@@ -49,7 +57,8 @@
 #'   outcome_type = "RD",
 #'   reference_probability = 0.5,
 #'   relative_effect = -0.35,
-#'   relative_confidence_interval = c(-0.4, -0.3)
+#'   relative_confidence_interval = c(-0.4, -0.3),
+#'   colour_palette = "colourblind"
 #' )
 PopViz <- function(
     glyph_count,
@@ -63,8 +72,14 @@ PopViz <- function(
     relative_effect,
     relative_confidence_interval,
     title=NULL,
-    colour_palette="auto"
+    colour_palette="auto",
+    glyph=NULL,
+    glyph_size=NULL
     ) {
+  
+  if (glyph_count > 100) {
+    stop("Please specify 100 or fewer people")
+  }
 
   if (outcome_type == "RD") {
     treatment_probability <- reference_probability + relative_effect
@@ -118,7 +133,9 @@ PopViz <- function(
     treatment_person_count,
     glyph_spacing,
     event_desired,
-    colour_palette
+    colour_palette,
+    glyph,
+    glyph_size
   )
   plot <- .PlotTitle(
     plot,
@@ -265,6 +282,14 @@ PopViz <- function(
 #' - "positive_relative_effect" Colour for all glyphs positively affected by the treatment
 #' - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
 #' - "common_effect" Colour for all glyphs affected by both the reference and the treatment
+#' @param glyph Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+#' Builtin glyphs:
+#' - "person"
+#' - "person-narrow"
+#' - "person-super-narrow"
+#' - "person-dress"
+#' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
+#' Defaults to NULL where the size is chosen based on `glyph`
 #'
 #' @return {ggplot2} object
 .PlotGlyphs <- function(
@@ -275,7 +300,9 @@ PopViz <- function(
     treatment_person_count,
     glyph_spacing,
     event_desired,
-    colour_palette="auto"
+    colour_palette="auto",
+    glyph=NULL,
+    glyph_size=NULL
     ) {
   
   if (is.character(colour_palette)) {
@@ -316,7 +343,7 @@ PopViz <- function(
     y = rep(1, relative_affected_glyph_count)
   )
   
-  glyph_data <- .GetGlyphFile(glyph_count)
+  glyph_data <- .GetGlyphFile(glyph_count, glyph, glyph_size)
   
   svg_text_raw <- ReadSvgText(filename = glyph_data$filename)
   svg_text_base <- ModifySvgText(svg_text_raw, colour = colour_palette$base)
@@ -416,22 +443,34 @@ PopViz <- function(
 #' Get the glyph file based on the number of people on the plot.
 #'
 #' @param glyph_count The number of glyphs on the plot
+#' @param glyph Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+#' Builtin glyphs:
+#' - "person"
+#' - "person-narrow"
+#' - "person-super-narrow"
+#' - "person-dress"
+#' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
+#' Defaults to NULL where the size is chosen based on `glyph`
 #'
 #' @return List containing:
 #' - "filename": The path to the glyph file
 #' - "size": the size of the glyph to be rendered
-.GetGlyphFile <- function(glyph_count) {
-  if (glyph_count <= 20) {
+.GetGlyphFile <- function(glyph_count, glyph=NULL, glyph_size=NULL) {
+  if ((is.null(glyph) && glyph_count <= 20) || (!is.null(glyph) && glyph == "person")) {
     dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
-    dynamic_person_size <- 8
-  } else if (glyph_count <= 50) {
+    dynamic_person_size <- ifelse(is.null(glyph_size), 8, glyph_size)
+  } else if ((is.null(glyph) && glyph_count <= 50) || (!is.null(glyph) && glyph == "person-narrow")) {
     dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
-    dynamic_person_size <- 5
-  } else if (glyph_count <= 100) {
+    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
+  } else if ((is.null(glyph) && glyph_count <= 100) || (!is.null(glyph) && glyph == "person-super-narrow")) {
     dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
-    dynamic_person_size <- 3
+    dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
+  } else if (!is.null(glyph) && glyph == "person-dress") {
+    dynamic_person_file <- system.file("person-dress.svg", package="PopViz")
+    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
   } else {
-    stop("Please specify 100 or fewer people")
+    dynamic_person_file <- glyph
+    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
   }
   
   return(
