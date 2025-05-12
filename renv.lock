@@ -731,6 +731,7 @@
       "BugReports": "https://github.com/coolbutuseless/ggsvg/issues",
       "Encoding": "UTF-8",
       "Language": "en-US",
+      "LazyData": "true",
       "RoxygenNote": "7.3.2",
       "Imports": [
         "grid",
@@ -749,14 +750,13 @@
       ],
       "VignetteBuilder": "knitr",
       "Config/testthat/edition": "3",
+      "Author": "Mike Cheng [aut, cre, cph]",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "ggsvg",
       "RemoteUsername": "coolbutuseless",
       "RemoteRef": "HEAD",
-      "RemoteSha": "340fd565fa9d6d832f44e8a07dc5ceed04cec5c5",
-      "NeedsCompilation": "no",
-      "Author": "Mike Cheng [aut, cre, cph]"
+      "RemoteSha": "340fd565fa9d6d832f44e8a07dc5ceed04cec5c5"
     },
     "glue": {
       "Package": "glue",
