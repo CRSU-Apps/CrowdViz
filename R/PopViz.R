@@ -1,6 +1,7 @@
 #' Create a population visualisation for absolute effects.
 #'
-#' @param person_count Number of people to display
+#' @param glyph_count Number of glyphs being rendered
+#' @param person_multiplier The number of people that each glyph represents. Defaults to 1
 #' @param event_desired TRUE if events are desired, else FALSE
 #' @param outcome_name Name of event being measured
 #' @param reference_name Name of reference intervention
@@ -9,6 +10,13 @@
 #' @param reference_probability Probability of event in reference intervention
 #' @param relative_effect Point estimate of relative effect
 #' @param relative_confidence_interval Vector of lower and upper limits of confidence interval of relative effect
+#' @param title Title to add to graphic. If NULL, the title will be created from the data. Defaults to NULL
+#' @param colour_palette Either "auto" or "colourblind" for predefined palettes, or a list containing the colours to display:
+#' - "base" Colour for all unaffected glyphs
+#' - "positive_relative_effect" Colour for all glyphs positively affected by the treatment
+#' - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
+#' - "common_effect" Colour for all glyphs affected by both the reference and the treatment
+#' Defaults to "auto"
 #'
 #' @return ggplot2 plot object
 #' @export
@@ -20,7 +28,7 @@
 #' library(ggplot2)
 #' 
 #' PopViz::PopViz(
-#'   person_count = 5,
+#'   glyph_count = 5,
 #'   event_desired = FALSE,
 #'   outcome_name = "Adverse Events",
 #'   reference_name = "Standard Care",
@@ -41,7 +49,8 @@ PopViz <- function(
     reference_probability,
     relative_effect,
     relative_confidence_interval,
-    title=NULL
+    title=NULL,
+    colour_palette="auto"
     ) {
 
   if (outcome_type == "RD") {
@@ -61,7 +70,7 @@ PopViz <- function(
   
   reference_person_count = round(person_count * reference_probability)
   treatment_person_count = round(person_count * treatment_probability)
-  person_spacing = 1 / (glyph_count - 1)
+  glyph_spacing = 1 / (glyph_count - 1)
   
   # Plot formatting
   plot <- ggplot() +
@@ -70,10 +79,44 @@ PopViz <- function(
     theme_void() +
     theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
   
-  plot <- .PlotConfidenceInterval(plot, treatment_probability, treatment_confidence_interval)
-  plot <- .PlotAxes(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, reference_name, treatment_name, treatment_probability, reference_probability, treatment_confidence_interval)
-  plot <- .PlotGlyphs(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, event_desired)
-  plot <- .PlotTitle(plot, title, person_count, outcome_name, reference_name, treatment_name, reference_probability, treatment_probability)
+  plot <- .PlotConfidenceInterval(
+    plot,
+    glyph_spacing * (treatment_person_count / person_multiplier - 0.5),
+    treatment_confidence_interval
+  )
+  plot <- .PlotAxes(
+    plot,
+    glyph_count,
+    person_multiplier,
+    reference_person_count,
+    treatment_person_count,
+    glyph_spacing,
+    reference_name,
+    treatment_name,
+    reference_probability,
+    treatment_probability,
+    treatment_confidence_interval
+  )
+  plot <- .PlotGlyphs(
+    plot,
+    glyph_count,
+    person_multiplier,
+    reference_person_count,
+    treatment_person_count,
+    glyph_spacing,
+    event_desired,
+    colour_palette
+  )
+  plot <- .PlotTitle(
+    plot,
+    title,
+    person_count,
+    outcome_name,
+    reference_name,
+    treatment_name,
+    reference_probability,
+    treatment_probability
+  )
   
   return(plot)
 }
@@ -81,14 +124,15 @@ PopViz <- function(
 #' Plot the axes, ticks and labels
 #'
 #' @param plot {ggplot2} object to which to add elements
-#' @param person_count Number of people being rendered
+#' @param glyph_count Number of glyphs being rendered
+#' @param person_multiplier The number of people that each glyph represents
 #' @param reference_person_count Number of people affected by the reference
 #' @param treatment_person_count number of people affected by the treatment
-#' @param person_spacing Spacing between people
+#' @param glyph_spacing Spacing between glyphs
 #' @param reference_name Name of reference
-#' @param treatment_name NAme of treatment
-#' @param treatment_probability Probability of treatment affecting a person
+#' @param treatment_name Name of treatment
 #' @param reference_probability Probability of reference affecting a person
+#' @param treatment_probability Probability of treatment affecting a person
 #' @param treatment_confidence_interval Confidence interval of treatment effect
 #'
 #' @return {ggplot2} object
@@ -98,11 +142,11 @@ PopViz <- function(
     person_multiplier,
     reference_person_count,
     treatment_person_count,
-    person_spacing,
+    glyph_spacing,
     reference_name,
     treatment_name,
-    treatment_probability,
     reference_probability,
+    treatment_probability,
     treatment_confidence_interval
     ) {
   # Horizontal lines
@@ -116,8 +160,8 @@ PopViz <- function(
     y = c(0.75, 0.75)
   )
   
-  reference_tick_position_x = person_spacing * (reference_person_count / person_multiplier - 0.5)
-  treatment_tick_position_x = person_spacing * (treatment_person_count / person_multiplier - 0.5)
+  reference_tick_position_x = glyph_spacing * (reference_person_count / person_multiplier - 0.5)
+  treatment_tick_position_x = glyph_spacing * (treatment_person_count / person_multiplier - 0.5)
   
   # Tick marks, rounding to the nearest person
   reference_tick_position <- data.frame(
@@ -197,14 +241,49 @@ PopViz <- function(
 #' Render the people on the plot.
 #'
 #' @param plot {ggplot2} object to which to add elements
-#' @param person_count Number of people being rendered
+#' @param glyph_count Number of glyphs being rendered
+#' @param person_multiplier The number of people that each glyph represents
 #' @param reference_person_count Number of people affected by the reference
 #' @param treatment_person_count number of people affected by the treatment
-#' @param person_spacing Spacing between people
-#' @param event_desired 
+#' @param glyph_spacing Spacing between glyphs
+#' @param event_desired TRUE if events are desired, else FALSE
+#' @param colour_palette Either "auto" or "colourblind" for predefined palettes, or a list containing the colours to display:
+#' - "base" Colour for all unaffected glyphs
+#' - "positive_relative_effect" Colour for all glyphs positively affected by the treatment
+#' - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
+#' - "common_effect" Colour for all glyphs affected by both the reference and the treatment
 #'
 #' @return {ggplot2} object
-.PlotGlyphs <- function(plot, glyph_count, person_multiplier, reference_person_count, treatment_person_count, person_spacing, event_desired) {
+.PlotGlyphs <- function(
+    plot,
+    glyph_count,
+    person_multiplier,
+    reference_person_count,
+    treatment_person_count,
+    glyph_spacing,
+    event_desired,
+    colour_palette="auto"
+    ) {
+  
+  if (is.character(colour_palette)) {
+    if (colour_palette == "auto") {
+      colour_palette <- list(
+        base = "#999999",
+        positive_relative_effect = "#00ff00",
+        negative_relative_effect = "#ff0000",
+        common_effect = "#ffaa00"
+      )
+    } else if (colour_palette == "colourblind") {
+      # Colours chosen using: https://davidmathlogic.com/colorblind/#%23999999-%23117733-%23882255-%23DDAA00
+      colour_palette <- list(
+        base = "#999999",
+        positive_relative_effect = "#117733",
+        negative_relative_effect = "#882255",
+        common_effect = "#ddaa00"
+      )
+    }
+  }
+  
   all_people_positions <- data.frame(
     x = seq(0, 1, length = glyph_count),
     y = rep(1, glyph_count)
@@ -213,27 +292,27 @@ PopViz <- function(
   common_affected_person_count = min(treatment_person_count, reference_person_count)
   common_affected_glyph_count = as.integer(common_affected_person_count / person_multiplier)
   common_affected_person_positions <- data.frame(
-    x = seq(0, person_spacing * (common_affected_glyph_count - 1), length = common_affected_glyph_count),
+    x = seq(0, glyph_spacing * (common_affected_glyph_count - 1), length = common_affected_glyph_count),
     y = rep(1, common_affected_glyph_count)
   )
   
   relative_affected_person_count = max(treatment_person_count, reference_person_count)
   relative_affected_glyph_count = as.integer(relative_affected_person_count / person_multiplier)
   relative_effected_person_positions <- data.frame(
-    x = seq(0, person_spacing * (relative_affected_glyph_count - 1), length = relative_affected_glyph_count),
+    x = seq(0, glyph_spacing * (relative_affected_glyph_count - 1), length = relative_affected_glyph_count),
     y = rep(1, relative_affected_glyph_count)
   )
   
   glyph_data <- .GetGlyphFile(glyph_count)
   
   svg_text_raw <- ReadSvgText(filename = glyph_data$filename)
-  svg_text_base <- ModifySvgText(svg_text_raw, colour = "#444444")
-  svg_text_affected <- ModifySvgText(svg_text_raw, colour = "#ffaa00")
+  svg_text_base <- ModifySvgText(svg_text_raw, colour = colour_palette$base)
+  svg_text_affected <- ModifySvgText(svg_text_raw, colour = colour_palette$common_effect)
   
   if (xor(treatment_person_count < reference_person_count, event_desired)) {
-    relative_affected_colour <- "#00ff00"
+    relative_affected_colour <- colour_palette$positive_relative_effect
   } else {
-    relative_affected_colour <- "#ff0000"
+    relative_affected_colour <- colour_palette$negative_relative_effect
   }
   svg_text_relative_affected <- ModifySvgText(svg_text_raw, colour = relative_affected_colour)
   
@@ -265,7 +344,7 @@ PopViz <- function(
     plot,
     relative_affected_person_count,
     person_multiplier,
-    person_spacing,
+    glyph_spacing,
     relative_affected_colour,
     glyph_data$size,
     svg_text_raw
@@ -275,8 +354,8 @@ PopViz <- function(
     plot,
     common_affected_person_count,
     person_multiplier,
-    person_spacing,
-    "#ffaa00",
+    glyph_spacing,
+    colour_palette$common_effect,
     glyph_data$size,
     svg_text_raw
   )
@@ -284,13 +363,24 @@ PopViz <- function(
   return(plot)
 }
 
-.PlotPartialPerson <- function(plot, person_count, person_multiplier, person_spacing, glyph_colour, glyph_size, svg_text_raw) {
+#' Plot a partial person overlapping whole people.
+#' 
+#' @param plot {ggplot2} object to which to add elements
+#' @param person_count total number of people represented in this category. Not the whole number represented in the graphic
+#' @param person_multiplier The number of people that each glyph represents
+#' @param glyph_spacing Spacing between glyphs
+#' @param glyph_colour Colour to display the glyph
+#' @param glyph_size Size of glyph
+#' @param svg_text_raw Raw text for SVG to be modified
+#'
+#' @return {ggplot2} object
+.PlotPartialPerson <- function(plot, person_count, person_multiplier, glyph_spacing, glyph_colour, glyph_size, svg_text_raw) {
   glyph_count = as.integer(person_count / person_multiplier)
   proportion = (person_count / person_multiplier) %% 1
   
   if (proportion != 0) {
     person_position <- data.frame(
-      x = person_spacing * glyph_count,
+      x = glyph_spacing * glyph_count,
       y = 1
     )
     
@@ -312,19 +402,19 @@ PopViz <- function(
 
 #' Get the glyph file based on the number of people on the plot.
 #'
-#' @param person_count The number of people on the plot
+#' @param glyph_count The number of glyphs on the plot
 #'
 #' @return List containing:
 #' - "filename": The path to the glyph file
 #' - "size": the size of the glyph to be rendered
-.GetGlyphFile <- function(person_count) {
-  if (person_count <= 20) {
+.GetGlyphFile <- function(glyph_count) {
+  if (glyph_count <= 20) {
     dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
     dynamic_person_size <- 8
-  } else if (20 < person_count & person_count <= 50) {
+  } else if (glyph_count <= 50) {
     dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
     dynamic_person_size <- 5
-  } else if (50 < person_count & person_count <= 100) {
+  } else if (glyph_count <= 100) {
     dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
     dynamic_person_size <- 3
   } else {
@@ -339,7 +429,7 @@ PopViz <- function(
   )
 }
 
-#' Plot the conifdence interval gradient.
+#' Plot the confidence interval gradient.
 #'
 #' @param plot {ggplot2} object to which to add elements
 #' @param treatment_probability Probability of treatment affecting a person
@@ -374,8 +464,8 @@ PopViz <- function(
 #' Add the title to the plot.
 #'
 #' @param plot {ggplot2} object to which to add elements
-#' @param title Title of the plot. Can be `NULL` if non specified
-#' @param person_count Number of people being rendered
+#' @param title Title to add to graphic. If NULL, the title will be created from the data. Defaults to NULL
+#' @param person_count Number of people being represented
 #' @param outcome_name Name of event being measured
 #' @param reference_name Name of reference
 #' @param treatment_name Name of treatment
