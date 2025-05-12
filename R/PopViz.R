@@ -38,6 +38,19 @@
 #'   relative_effect = 0.3,
 #'   relative_confidence_interval = c(0.1, 0.5)
 #' )
+#' 
+#' PopViz::PopViz(
+#'   glyph_count = 15,
+#'   person_multiplier = 4,
+#'   event_desired = FALSE,
+#'   outcome_name = "Adverse Events",
+#'   reference_name = "Standard Care",
+#'   treatment_name = "Treatment",
+#'   outcome_type = "RD",
+#'   reference_probability = 0.5,
+#'   relative_effect = -0.35,
+#'   relative_confidence_interval = c(-0.4, -0.3)
+#' )
 PopViz <- function(
     glyph_count,
     person_multiplier = 1,
@@ -340,7 +353,7 @@ PopViz <- function(
     )
   
   # Plot partial people for relative effects
-  plot <- .PlotPartialPerson(
+  plot <- .PlotPartialGlyph(
     plot,
     relative_affected_person_count,
     person_multiplier,
@@ -350,7 +363,7 @@ PopViz <- function(
     svg_text_raw
   )
   # Plot partial people for common effects
-  plot <- .PlotPartialPerson(
+  plot <- .PlotPartialGlyph(
     plot,
     common_affected_person_count,
     person_multiplier,
@@ -374,7 +387,7 @@ PopViz <- function(
 #' @param svg_text_raw Raw text for SVG to be modified
 #'
 #' @return {ggplot2} object
-.PlotPartialPerson <- function(plot, person_count, person_multiplier, glyph_spacing, glyph_colour, glyph_size, svg_text_raw) {
+.PlotPartialGlyph <- function(plot, person_count, person_multiplier, glyph_spacing, glyph_colour, glyph_size, svg_text_raw) {
   glyph_count = as.integer(person_count / person_multiplier)
   proportion = (person_count / person_multiplier) %% 1
   
