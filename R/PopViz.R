@@ -60,7 +60,8 @@
 #'   reference_probability = 0.5,
 #'   relative_effect = -0.35,
 #'   relative_confidence_interval = c(-0.4, -0.3),
-#'   colour_palette = "colourblind"
+#'   colour_palette = "colourblind",
+#'   glyph = "person-dress"
 #' )
 PopViz <- function(
     glyph_count,
