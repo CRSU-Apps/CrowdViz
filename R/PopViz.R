@@ -466,7 +466,7 @@ PopViz <- function(
     dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
     dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
   } else if (!is.null(glyph) && glyph == "person-dress") {
-    dynamic_person_file <- system.file("person-dress.svg", package="PopViz")
+    dynamic_person_file <- system.file("person-solid-dress.svg", package="PopViz")
     dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
   } else {
     dynamic_person_file <- glyph
