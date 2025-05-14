@@ -5,10 +5,16 @@ NULL
 person_solid <- file.path("inst","person-solid.svg")
 person_narrow <- file.path("inst","person-narrow.svg")
 person_super_narrow <- file.path("inst","person-super-narrow.svg")
+person_solid_dress <- file.path("inst","person-dress-solid.svg")
+person_narrow_dress <- file.path("inst","person-dress-narrow.svg")
+person_super_narrow_dress <- file.path("inst","person-dress-super-narrow.svg")
 
 .onLoad <- function (libname, pkgname) {
   ns <- topenv()
   ns$person_solid <- system.file("person-solid.svg", package = "PopViz")
   ns$person_narrow <- system.file("person-narrow.svg", package = "PopViz")
   ns$person_super_narrow <- system.file("person-super-narrow.svg", package = "PopViz")
+  ns$person_solid_dress <- system.file("person-dress-solid.svg", package = "PopViz")
+  ns$person_narrow_dress <- system.file("person-dress-narrow.svg", package = "PopViz")
+  ns$person_super_narrow_dress <- system.file("person-dress-super-narrow.svg", package = "PopViz")
 }

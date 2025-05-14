@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100"
+   height="300"
+   viewBox="0 0 26.458332 79.375"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="person-dress-narrow.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="px"
+     inkscape:zoom="0.94615212"
+     inkscape:cx="289.06557"
+     inkscape:cy="210.85404"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect2"
+       style="stroke:none;stroke-width:0.264583;stroke-opacity:1"
+       d="M 13.229166 0 A 9.260416 9.260416 0 0 0 3.9687499 9.2604164 A 9.260416 9.260416 0 0 0 13.229166 18.520833 A 9.260416 9.260416 0 0 0 22.489583 9.2604164 A 9.260416 9.260416 0 0 0 13.229166 0 z M 7.9374998 21.166666 C 6.4717111 21.166666 5.2916665 22.346711 5.2916665 23.812499 L 5.2916665 38.00078 L 0.2563151 51.786502 A 2.6458333 2.6458333 0 0 0 0 52.916665 A 2.6458333 2.6458333 0 0 0 2.6458333 55.562499 A 2.6458333 2.6458333 0 0 0 3.0551106 55.528392 L 6.617167 55.511856 C 6.6168471 55.528879 6.6145832 55.545396 6.6145832 55.562499 L 6.6145832 76.729165 C 6.6145832 78.194955 7.7946263 79.374998 9.2604164 79.374998 L 17.197916 79.374998 C 18.663706 79.374998 19.843749 78.194955 19.843749 76.729165 L 19.843749 55.562499 C 19.843749 55.52463 19.839625 55.487832 19.838065 55.450361 L 23.013582 55.435375 A 2.6458333 2.6458333 0 0 0 23.812499 55.562499 A 2.6458333 2.6458333 0 0 0 26.458333 52.916665 A 2.6458333 2.6458333 0 0 0 26.131738 51.644392 L 21.166666 38.314456 L 21.166666 23.812499 C 21.166666 22.346711 19.986621 21.166666 18.520833 21.166666 L 13.229166 21.166666 L 7.9374998 21.166666 z " />
+  </g>
+</svg>

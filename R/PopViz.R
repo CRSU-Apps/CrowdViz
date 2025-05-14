@@ -23,6 +23,8 @@
 #' - "person-narrow"
 #' - "person-super-narrow"
 #' - "person-dress"
+#' - "person-dress-narrow"
+#' - "person-dress-super-narrow"
 #' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
 #' Defaults to NULL where the size is chosen based on `glyph`
 #'
@@ -288,6 +290,8 @@ PopViz <- function(
 #' - "person-narrow"
 #' - "person-super-narrow"
 #' - "person-dress"
+#' - "person-dress-narrow"
+#' - "person-dress-super-narrow"
 #' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
 #' Defaults to NULL where the size is chosen based on `glyph`
 #'
@@ -449,6 +453,8 @@ PopViz <- function(
 #' - "person-narrow"
 #' - "person-super-narrow"
 #' - "person-dress"
+#' - "person-dress-narrow"
+#' - "person-dress-super-narrow"
 #' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
 #' Defaults to NULL where the size is chosen based on `glyph`
 #'
@@ -466,8 +472,14 @@ PopViz <- function(
     dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
     dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
   } else if (!is.null(glyph) && glyph == "person-dress") {
-    dynamic_person_file <- system.file("person-solid-dress.svg", package="PopViz")
+    dynamic_person_file <- system.file("person-dress-solid.svg", package="PopViz")
+    dynamic_person_size <- ifelse(is.null(glyph_size), 8, glyph_size)
+  } else if (!is.null(glyph) && glyph == "person-dress-narrow") {
+    dynamic_person_file <- system.file("person-dress-narrow.svg", package="PopViz")
     dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
+  } else if (!is.null(glyph) && glyph == "person-dress-super-narrow") {
+    dynamic_person_file <- system.file("person-dress-super-narrow.svg", package="PopViz")
+    dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
   } else {
     dynamic_person_file <- glyph
     dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
