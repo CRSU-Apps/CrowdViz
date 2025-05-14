@@ -5,7 +5,8 @@
 \title{Create a population visualisation for absolute effects.}
 \usage{
 PopViz(
-  person_count,
+  glyph_count,
+  person_multiplier = 1,
   event_desired,
   outcome_name,
   reference_name,
@@ -14,11 +15,16 @@ PopViz(
   reference_probability,
   relative_effect,
   relative_confidence_interval,
-  title = NULL
+  title = NULL,
+  colour_palette = "auto",
+  glyph = NULL,
+  glyph_size = NULL
 )
 }
 \arguments{
-\item{person_count}{Number of people to display}
+\item{glyph_count}{Number of glyphs being rendered}
+
+\item{person_multiplier}{The number of people that each glyph represents. Defaults to 1}
 
 \item{event_desired}{TRUE if events are desired, else FALSE}
 
@@ -35,6 +41,27 @@ PopViz(
 \item{relative_effect}{Point estimate of relative effect}
 
 \item{relative_confidence_interval}{Vector of lower and upper limits of confidence interval of relative effect}
+
+\item{title}{Title to add to graphic. If NULL, the title will be created from the data. Defaults to NULL}
+
+\item{colour_palette}{Either "auto" or "colourblind" for predefined palettes, or a list containing the colours to display:
+- "base" Colour for all unaffected glyphs
+- "positive_relative_effect" Colour for all glyphs positively affected by the treatment
+- "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
+- "common_effect" Colour for all glyphs affected by both the reference and the treatment
+Defaults to "auto"}
+
+\item{glyph}{Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+Builtin glyphs:
+- "person"
+- "person-narrow"
+- "person-super-narrow"
+- "person-dress"
+- "person-dress-narrow"
+- "person-dress-super-narrow"}
+
+\item{glyph_size}{Size of the glyph to render. It is related to the size of the used `.svg` file.
+Defaults to NULL where the size is chosen based on `glyph`}
 }
 \value{
 ggplot2 plot object
@@ -47,7 +74,7 @@ Create a population visualisation for absolute effects.
 library(ggplot2)
 
 PopViz::PopViz(
-  person_count = 5,
+  glyph_count = 5,
   event_desired = FALSE,
   outcome_name = "Adverse Events",
   reference_name = "Standard Care",
@@ -56,5 +83,19 @@ PopViz::PopViz(
   reference_probability = 0.5,
   relative_effect = 0.3,
   relative_confidence_interval = c(0.1, 0.5)
+)
+
+PopViz::PopViz(
+  glyph_count = 15,
+  person_multiplier = 4,
+  event_desired = FALSE,
+  outcome_name = "Adverse Events",
+  reference_name = "Standard Care",
+  treatment_name = "Treatment",
+  outcome_type = "RD",
+  reference_probability = 0.5,
+  relative_effect = -0.35,
+  relative_confidence_interval = c(-0.4, -0.3),
+  colour_palette = "colourblind"
 )
 }

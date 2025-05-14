@@ -6,25 +6,49 @@
 \usage{
 .PlotGlyphs(
   plot,
-  person_count,
+  glyph_count,
+  person_multiplier,
   reference_person_count,
   treatment_person_count,
-  person_spacing,
-  event_desired
+  glyph_spacing,
+  event_desired,
+  colour_palette = "auto",
+  glyph = NULL,
+  glyph_size = NULL
 )
 }
 \arguments{
 \item{plot}{{ggplot2} object to which to add elements}
 
-\item{person_count}{Number of people being rendered}
+\item{glyph_count}{Number of glyphs being rendered}
+
+\item{person_multiplier}{The number of people that each glyph represents}
 
 \item{reference_person_count}{Number of people affected by the reference}
 
 \item{treatment_person_count}{number of people affected by the treatment}
 
-\item{person_spacing}{Spacing between people}
+\item{glyph_spacing}{Spacing between glyphs}
 
-\item{event_desired}{}
+\item{event_desired}{TRUE if events are desired, else FALSE}
+
+\item{colour_palette}{Either "auto" or "colourblind" for predefined palettes, or a list containing the colours to display:
+- "base" Colour for all unaffected glyphs
+- "positive_relative_effect" Colour for all glyphs positively affected by the treatment
+- "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
+- "common_effect" Colour for all glyphs affected by both the reference and the treatment}
+
+\item{glyph}{Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+Builtin glyphs:
+- "person"
+- "person-narrow"
+- "person-super-narrow"
+- "person-dress"
+- "person-dress-narrow"
+- "person-dress-super-narrow"}
+
+\item{glyph_size}{Size of the glyph to render. It is related to the size of the used `.svg` file.
+Defaults to NULL where the size is chosen based on `glyph`}
 }
 \value{
 {ggplot2} object

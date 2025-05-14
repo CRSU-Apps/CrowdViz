@@ -2,7 +2,7 @@
 % Please edit documentation in R/PopViz.R
 \name{.PlotConfidenceInterval}
 \alias{.PlotConfidenceInterval}
-\title{Plot the conifdence interval gradient.}
+\title{Plot the confidence interval gradient.}
 \usage{
 .PlotConfidenceInterval(
   plot,
@@ -21,5 +21,5 @@
 {ggplot2} object
 }
 \description{
-Plot the conifdence interval gradient.
+Plot the confidence interval gradient.
 }

@@ -6,35 +6,38 @@
 \usage{
 .PlotAxes(
   plot,
-  person_count,
+  glyph_count,
+  person_multiplier,
   reference_person_count,
   treatment_person_count,
-  person_spacing,
+  glyph_spacing,
   reference_name,
   treatment_name,
-  treatment_probability,
   reference_probability,
+  treatment_probability,
   treatment_confidence_interval
 )
 }
 \arguments{
 \item{plot}{{ggplot2} object to which to add elements}
 
-\item{person_count}{Number of people being rendered}
+\item{glyph_count}{Number of glyphs being rendered}
+
+\item{person_multiplier}{The number of people that each glyph represents}
 
 \item{reference_person_count}{Number of people affected by the reference}
 
 \item{treatment_person_count}{number of people affected by the treatment}
 
-\item{person_spacing}{Spacing between people}
+\item{glyph_spacing}{Spacing between glyphs}
 
 \item{reference_name}{Name of reference}
 
-\item{treatment_name}{NAme of treatment}
-
-\item{treatment_probability}{Probability of treatment affecting a person}
+\item{treatment_name}{Name of treatment}
 
 \item{reference_probability}{Probability of reference affecting a person}
+
+\item{treatment_probability}{Probability of treatment affecting a person}
 
 \item{treatment_confidence_interval}{Confidence interval of treatment effect}
 }

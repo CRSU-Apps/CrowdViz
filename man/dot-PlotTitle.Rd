@@ -18,9 +18,9 @@
 \arguments{
 \item{plot}{{ggplot2} object to which to add elements}
 
-\item{title}{Title of the plot. Can be `NULL` if non specified}
+\item{title}{Title to add to graphic. If NULL, the title will be created from the data. Defaults to NULL}
 
-\item{person_count}{Number of people being rendered}
+\item{person_count}{Number of people being represented}
 
 \item{outcome_name}{Name of event being measured}
 
