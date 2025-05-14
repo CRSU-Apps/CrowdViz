@@ -13,9 +13,9 @@
 #' ModifySvgText(svg_text)
 #' ModifySvgText(svg_text, "#33aaff", 0.2, 0.8)
 ModifySvgText <- function(svg_text, colour="#000000", start_proportion=0, end_proportion=1) {
-  width = as.integer(stringr::str_extract(svg_text, '<svg.*viewBox="(?:[0-9.]+ ){2}([0-9.]+)', 1))
-  start = as.integer(start_proportion * width)
-  end = as.integer((end_proportion - start_proportion) * width)
+  width = as.numeric(stringr::str_extract(svg_text, '<svg.*viewBox="(?:[0-9.]+ ){2}([0-9.]+)', 1))
+  start = as.numeric(start_proportion * width)
+  end = as.numeric((end_proportion - start_proportion) * width)
   
   svg_text <- svg_text |>
     # Set the view box to truncate the image left or right
