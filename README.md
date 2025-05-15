@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/15424132.svg)](https://zenodo.org/doi/10.5281/zenodo.15424132)
+[![DOI](https://zenodo.org/badge/978636174.svg)](https://doi.org/10.5281/zenodo.15424132)
 
 # PopViz
 
@@ -8,7 +8,7 @@ A visualisation package to show absolute effects as a proportion of a population
 
 From your R console, use the following command
 
-```
+```         
 # install.packages("remotes") # If not already installed
 remotes::install_github("CRSU-Apps/PopViz")
 ```
@@ -21,7 +21,7 @@ If you encounter issues with {ggplot2} functions not being found, or with files 
 
 ![Simple visualisation example](images/example1.png)
 
-```
+```         
 PopViz::PopViz(
   glyph_count = 10,
   event_desired = FALSE,
@@ -39,7 +39,7 @@ PopViz::PopViz(
 
 ![Simple visualisation example](images/example2.png)
 
-```
+```         
 PopViz::PopViz(
   glyph_count = 20,
   person_multiplier = 5,
