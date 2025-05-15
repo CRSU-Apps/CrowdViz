@@ -498,7 +498,7 @@ PopViz <- function(
 #' @return {ggplot2} object
 .PlotConfidenceInterval <- function(plot, treatment_probability, treatment_confidence_interval) {
   tile_data <- data.frame(
-    x = seq(0, 1, length.out = 1001),
+    x = seq(0.001, 1, length.out = 1000),
     y = 0.75
   ) |>
     dplyr::mutate(
@@ -514,8 +514,7 @@ PopViz <- function(
     geom_tile(data = tile_data,
               aes(x = x, y = y, fill = dens),
               height = 0.1,
-              width = 0.001,
-              hjust = 0) +
+              width = 0.001) +
     scale_fill_continuous(low = "white", high = "#5555ff")
   
   return(plot)
