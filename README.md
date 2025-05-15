@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/15424132.svg)](https://zenodo.org/doi/10.5281/zenodo.15424132)
+
 # PopViz
 
 A visualisation package to show absolute effects as a proportion of a population.
