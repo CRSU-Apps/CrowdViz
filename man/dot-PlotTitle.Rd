@@ -12,7 +12,9 @@
   reference_name,
   treatment_name,
   reference_probability,
-  treatment_probability
+  treatment_probability,
+  population_name,
+  treatment_plural
 )
 }
 \arguments{
@@ -31,6 +33,10 @@
 \item{reference_probability}{Probability of reference affecting a person}
 
 \item{treatment_probability}{Probability of treatment affecting a person}
+
+\item{population_name}{Name of the population}
+
+\item{treatment_plural}{TRUE if the treatment is a plural}
 }
 \value{
 {ggplot2} object

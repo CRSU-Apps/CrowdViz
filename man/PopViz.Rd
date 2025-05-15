@@ -18,7 +18,10 @@ PopViz(
   title = NULL,
   colour_palette = "auto",
   glyph = NULL,
-  glyph_size = NULL
+  glyph_size = NULL,
+  glyph_resolution = NULL,
+  population_name = "People",
+  treatment_plural = FALSE
 )
 }
 \arguments{
@@ -62,6 +65,14 @@ Builtin glyphs:
 
 \item{glyph_size}{Size of the glyph to render. It is related to the size of the used `.svg` file.
 Defaults to NULL where the size is chosen based on `glyph`}
+
+\item{glyph_resolution}{Resolution of the glyph to render. A typical value is 100. 
+Overly high values will prevent the visualisation from rendering entirely.
+Defaults to NULL where the resolution is chosen based on `glyph`}
+
+\item{population_name}{Name of the population. Defaults to "People"}
+
+\item{treatment_plural}{TRUE if the treatment is a plural. Defaults to FALSE}
 }
 \value{
 ggplot2 plot object
@@ -74,29 +85,31 @@ Create a population visualisation for absolute effects.
 library(ggplot2)
 
 PopViz::PopViz(
-  glyph_count = 5,
+  glyph_count = 10,
   event_desired = FALSE,
-  outcome_name = "Adverse Events",
-  reference_name = "Standard Care",
-  treatment_name = "Treatment",
+  outcome_name = "Fillings",
+  reference_name = "Mounthwash",
+  treatment_name = "Regular Tooth Brushing",
   outcome_type = "RD",
-  reference_probability = 0.5,
-  relative_effect = 0.3,
-  relative_confidence_interval = c(0.1, 0.5)
+  reference_probability = 0.4,
+  relative_effect = -0.2,
+  relative_confidence_interval = c(-0.26, -0.14)
 )
 
 PopViz::PopViz(
-  glyph_count = 15,
-  person_multiplier = 4,
+  glyph_count = 20,
+  person_multiplier = 5,
   event_desired = FALSE,
-  outcome_name = "Adverse Events",
-  reference_name = "Standard Care",
-  treatment_name = "Treatment",
+  outcome_name = "Blisters",
+  reference_name = "Trainers",
+  treatment_name = "High Heels",
   outcome_type = "RD",
-  reference_probability = 0.5,
-  relative_effect = -0.35,
-  relative_confidence_interval = c(-0.4, -0.3),
+  reference_probability = 0.04,
+  relative_effect = 0.37,
   colour_palette = "colourblind",
-  glyph = "person-dress"
+  glyph = "person-dress",
+  relative_confidence_interval = c(0.3, 0.4),
+  population_name = "Women",
+  treatment_plural = TRUE
 )
 }

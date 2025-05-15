@@ -27,6 +27,11 @@
 #' - "person-dress-super-narrow"
 #' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
 #' Defaults to NULL where the size is chosen based on `glyph`
+#' @param glyph_resolution Resolution of the glyph to render. A typical value is 100. 
+#' Overly high values will prevent the visualisation from rendering entirely.
+#' Defaults to NULL where the resolution is chosen based on `glyph`
+#' @param population_name Name of the population. Defaults to "People"
+#' @param treatment_plural TRUE if the treatment is a plural. Defaults to FALSE
 #'
 #' @return ggplot2 plot object
 #' @export
@@ -38,30 +43,32 @@
 #' library(ggplot2)
 #' 
 #' PopViz::PopViz(
-#'   glyph_count = 5,
+#'   glyph_count = 10,
 #'   event_desired = FALSE,
-#'   outcome_name = "Adverse Events",
-#'   reference_name = "Standard Care",
-#'   treatment_name = "Treatment",
+#'   outcome_name = "Fillings",
+#'   reference_name = "Mounthwash",
+#'   treatment_name = "Regular Tooth Brushing",
 #'   outcome_type = "RD",
-#'   reference_probability = 0.5,
-#'   relative_effect = 0.3,
-#'   relative_confidence_interval = c(0.1, 0.5)
+#'   reference_probability = 0.4,
+#'   relative_effect = -0.2,
+#'   relative_confidence_interval = c(-0.26, -0.14)
 #' )
 #' 
 #' PopViz::PopViz(
-#'   glyph_count = 15,
-#'   person_multiplier = 4,
+#'   glyph_count = 20,
+#'   person_multiplier = 5,
 #'   event_desired = FALSE,
-#'   outcome_name = "Adverse Events",
-#'   reference_name = "Standard Care",
-#'   treatment_name = "Treatment",
+#'   outcome_name = "Blisters",
+#'   reference_name = "Trainers",
+#'   treatment_name = "High Heels",
 #'   outcome_type = "RD",
-#'   reference_probability = 0.5,
-#'   relative_effect = -0.35,
-#'   relative_confidence_interval = c(-0.4, -0.3),
+#'   reference_probability = 0.04,
+#'   relative_effect = 0.37,
 #'   colour_palette = "colourblind",
-#'   glyph = "person-dress"
+#'   glyph = "person-dress",
+#'   relative_confidence_interval = c(0.3, 0.4),
+#'   population_name = "Women",
+#'   treatment_plural = TRUE
 #' )
 PopViz <- function(
     glyph_count,
@@ -77,7 +84,10 @@ PopViz <- function(
     title=NULL,
     colour_palette="auto",
     glyph=NULL,
-    glyph_size=NULL
+    glyph_size=NULL,
+    glyph_resolution=NULL,
+    population_name="People",
+    treatment_plural=FALSE
     ) {
   
   if (glyph_count > 100) {
@@ -138,7 +148,9 @@ PopViz <- function(
     event_desired,
     colour_palette,
     glyph,
-    glyph_size
+    glyph_size,
+    glyph_resolution,
+    population_name
   )
   plot <- .PlotTitle(
     plot,
@@ -148,7 +160,9 @@ PopViz <- function(
     reference_name,
     treatment_name,
     reference_probability,
-    treatment_probability
+    treatment_probability,
+    population_name,
+    treatment_plural
   )
   
   return(plot)
@@ -285,7 +299,7 @@ PopViz <- function(
 #' - "positive_relative_effect" Colour for all glyphs positively affected by the treatment
 #' - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
 #' - "common_effect" Colour for all glyphs affected by both the reference and the treatment
-#' @param glyph Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+#' @param glyph Name of builtin glyph, or filepath to `.svg` file.
 #' Builtin glyphs:
 #' - "person"
 #' - "person-narrow"
@@ -294,7 +308,8 @@ PopViz <- function(
 #' - "person-dress-narrow"
 #' - "person-dress-super-narrow"
 #' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
-#' Defaults to NULL where the size is chosen based on `glyph`
+#' @param glyph_resolution Resolution of the glyph to render.
+#' @param population_name Name of the population
 #'
 #' @return {ggplot2} object
 .PlotGlyphs <- function(
@@ -306,8 +321,10 @@ PopViz <- function(
     glyph_spacing,
     event_desired,
     colour_palette="auto",
-    glyph=NULL,
-    glyph_size=NULL
+    glyph,
+    glyph_size,
+    glyph_resolution,
+    population_name
     ) {
   
   if (is.character(colour_palette)) {
@@ -348,7 +365,7 @@ PopViz <- function(
     y = rep(1, relative_affected_glyph_count)
   )
   
-  glyph_data <- .GetGlyphFile(glyph_count, glyph, glyph_size)
+  glyph_data <- GetGlyphDetails(glyph_count, glyph, glyph_size, glyph_resolution)
   
   svg_text_raw <- ReadSvgText(filename = glyph_data$filename)
   svg_text_base <- ModifySvgText(svg_text_raw, colour = colour_palette$base)
@@ -367,21 +384,24 @@ PopViz <- function(
       data = all_people_positions,
       mapping = aes(x, y),
       svg = svg_text_base,
-      size = glyph_data$size
+      size = glyph_data$size,
+      svg_width = glyph_data$resolution
     ) +
     # People showing relative effect, from zero, up to maximum of comparator or treatment
     ggsvg::geom_point_svg(
       data = relative_effected_person_positions,
       mapping = aes(x, y),
       svg = svg_text_relative_affected,
-      size = glyph_data$size
+      size = glyph_data$size,
+      svg_width = glyph_data$resolution
     ) +
     # People showing common effect, from zero, up to minimum of comparator or treatment
     ggsvg::geom_point_svg(
       data = common_affected_person_positions,
       mapping = aes(x, y),
       svg = svg_text_affected,
-      size = glyph_data$size
+      size = glyph_data$size,
+      svg_width = glyph_data$resolution
     )
   
   # Plot partial people for relative effects
@@ -392,6 +412,7 @@ PopViz <- function(
     glyph_spacing,
     relative_affected_colour,
     glyph_data$size,
+    glyph_data$resolution,
     svg_text_raw
   )
   # Plot partial people for common effects
@@ -402,8 +423,20 @@ PopViz <- function(
     glyph_spacing,
     colour_palette$common_effect,
     glyph_data$size,
+    glyph_data$resolution,
     svg_text_raw
   )
+  
+  if (person_multiplier > 1) {
+    plot <- plot +
+      annotate(
+        geom = "text",
+        label = glue::glue("Each image represents {person_multiplier} {population_name}"),
+        x = 1.2,
+        y = 0.5,
+        hjust = 1
+      )
+  }
   
   return(plot)
 }
@@ -416,10 +449,20 @@ PopViz <- function(
 #' @param glyph_spacing Spacing between glyphs
 #' @param glyph_colour Colour to display the glyph
 #' @param glyph_size Size of glyph
+#' @param glyph_resolution Resolution of the glyph
 #' @param svg_text_raw Raw text for SVG to be modified
 #'
 #' @return {ggplot2} object
-.PlotPartialGlyph <- function(plot, person_count, person_multiplier, glyph_spacing, glyph_colour, glyph_size, svg_text_raw) {
+.PlotPartialGlyph <- function(
+    plot,
+    person_count,
+    person_multiplier,
+    glyph_spacing,
+    glyph_colour,
+    glyph_size,
+    glyph_resolution,
+    svg_text_raw
+    ) {
   glyph_count = as.integer(person_count / person_multiplier)
   proportion = (person_count / person_multiplier) %% 1
   
@@ -438,60 +481,12 @@ PopViz <- function(
         mapping = aes(x, y),
         svg = svg_text_partial,
         size = glyph_size * proportion,
+        svg_width = glyph_resolution,
         hjust = (1 - proportion) / (2 * proportion) + 0.5
       )
   }
   
   return(plot)
-}
-
-#' Get the glyph file based on the number of people on the plot.
-#'
-#' @param glyph_count The number of glyphs on the plot
-#' @param glyph Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
-#' Builtin glyphs:
-#' - "person"
-#' - "person-narrow"
-#' - "person-super-narrow"
-#' - "person-dress"
-#' - "person-dress-narrow"
-#' - "person-dress-super-narrow"
-#' @param glyph_size Size of the glyph to render. It is related to the size of the used `.svg` file.
-#' Defaults to NULL where the size is chosen based on `glyph`
-#'
-#' @return List containing:
-#' - "filename": The path to the glyph file
-#' - "size": the size of the glyph to be rendered
-.GetGlyphFile <- function(glyph_count, glyph=NULL, glyph_size=NULL) {
-  if ((is.null(glyph) && glyph_count <= 20) || (!is.null(glyph) && glyph == "person")) {
-    dynamic_person_file <- system.file("person-solid.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 8, glyph_size)
-  } else if ((is.null(glyph) && glyph_count <= 50) || (!is.null(glyph) && glyph == "person-narrow")) {
-    dynamic_person_file <- system.file("person-narrow.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
-  } else if ((is.null(glyph) && glyph_count <= 100) || (!is.null(glyph) && glyph == "person-super-narrow")) {
-    dynamic_person_file <- system.file("person-super-narrow.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
-  } else if (!is.null(glyph) && glyph == "person-dress") {
-    dynamic_person_file <- system.file("person-dress-solid.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 8, glyph_size)
-  } else if (!is.null(glyph) && glyph == "person-dress-narrow") {
-    dynamic_person_file <- system.file("person-dress-narrow.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
-  } else if (!is.null(glyph) && glyph == "person-dress-super-narrow") {
-    dynamic_person_file <- system.file("person-dress-super-narrow.svg", package="PopViz")
-    dynamic_person_size <- ifelse(is.null(glyph_size), 3, glyph_size)
-  } else {
-    dynamic_person_file <- glyph
-    dynamic_person_size <- ifelse(is.null(glyph_size), 5, glyph_size)
-  }
-  
-  return(
-    list(
-      filename = dynamic_person_file,
-      size = dynamic_person_size
-    )
-  )
 }
 
 #' Plot the confidence interval gradient.
@@ -536,6 +531,8 @@ PopViz <- function(
 #' @param treatment_name Name of treatment
 #' @param reference_probability Probability of reference affecting a person
 #' @param treatment_probability Probability of treatment affecting a person
+#' @param population_name Name of the population
+#' @param treatment_plural TRUE if the treatment is a plural
 #'
 #' @return {ggplot2} object
 .PlotTitle <- function(
@@ -546,7 +543,9 @@ PopViz <- function(
     reference_name,
     treatment_name,
     reference_probability,
-    treatment_probability
+    treatment_probability,
+    population_name,
+    treatment_plural
     ) {
   
   if (!is.null(title)) {
@@ -561,16 +560,18 @@ PopViz <- function(
       ggtitle(
         label = stringr::str_wrap(
           paste0(
-            "In a group of ",
+            "In a Group of ",
             person_count,
-            " People, ",
+            " ",
+            population_name,
+            ", ",
             treatment_name,
-            " increases the number of ",
+            ifelse(treatment_plural, " Increase", " Increases"),
+            " the Number of ",
             outcome_name,
             " by ",
             round(person_count * treatment_probability) - round(person_count * reference_probability),
-            " on average ",
-            "compared to ",
+            " on Average Compared to ",
             reference_name
           ),
           width = 60
@@ -581,14 +582,16 @@ PopViz <- function(
       ggtitle(
         label = stringr::str_wrap(
           paste0(
-            "In a group of ",
+            "In a Group of ",
             person_count,
-            " People, ",
+            " ",
+            population_name,
+            ", ",
             treatment_name,
-            " does not change the number of ",
+            ifelse(treatment_plural, " Do", " Does"),
+            " Not Change the Number of ",
             outcome_name,
-            " on average ",
-            "compared to ",
+            " on Average Compared to ",
             reference_name
           ),
           width = 60
@@ -599,16 +602,18 @@ PopViz <- function(
       ggtitle(
         label = stringr::str_wrap(
           paste0(
-            "In a group of ",
+            "In a Group of ",
             person_count,
-            " People, ",
+            " ",
+            population_name,
+            ", ",
             treatment_name,
-            " decreases the number of ",
+            ifelse(treatment_plural, " Decrease", " Decreases"),
+            " the Number of ",
             outcome_name,
             " by ",
             round(person_count * reference_probability) - round(person_count * treatment_probability),
-            " on average ",
-            "compared to ",
+            " on Average Compared to ",
             reference_name
           ),
           width = 60

@@ -13,8 +13,10 @@
   glyph_spacing,
   event_desired,
   colour_palette = "auto",
-  glyph = NULL,
-  glyph_size = NULL
+  glyph,
+  glyph_size,
+  glyph_resolution,
+  population_name
 )
 }
 \arguments{
@@ -38,7 +40,7 @@
 - "negative_relative_effect" Colour for all glyphs negatively affected by the treatment
 - "common_effect" Colour for all glyphs affected by both the reference and the treatment}
 
-\item{glyph}{Name of builtin glyph, or filepath to `.svg` file. Defaults to NULL, where the glyph will be chosen based on `glyph_count`
+\item{glyph}{Name of builtin glyph, or filepath to `.svg` file.
 Builtin glyphs:
 - "person"
 - "person-narrow"
@@ -47,8 +49,11 @@ Builtin glyphs:
 - "person-dress-narrow"
 - "person-dress-super-narrow"}
 
-\item{glyph_size}{Size of the glyph to render. It is related to the size of the used `.svg` file.
-Defaults to NULL where the size is chosen based on `glyph`}
+\item{glyph_size}{Size of the glyph to render. It is related to the size of the used `.svg` file.}
+
+\item{glyph_resolution}{Resolution of the glyph to render.}
+
+\item{population_name}{Name of the population}
 }
 \value{
 {ggplot2} object

@@ -11,6 +11,7 @@
   glyph_spacing,
   glyph_colour,
   glyph_size,
+  glyph_resolution,
   svg_text_raw
 )
 }
@@ -26,6 +27,8 @@
 \item{glyph_colour}{Colour to display the glyph}
 
 \item{glyph_size}{Size of glyph}
+
+\item{glyph_resolution}{Resolution of the glyph}
 
 \item{svg_text_raw}{Raw text for SVG to be modified}
 }
