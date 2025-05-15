@@ -1,7 +1,7 @@
 Package: PopViz
 Type: Package
-Title: Absolute Effects Visualisation Using People
-Version: 0.1.0
+Title: Visualisation of Absolute Effects Within a Population
+Version: 1.0.0
 Authors@R: c(
     person("CRSU", role = "cre", email = "apps@crsu.org.uk"),
     person("Nathan", "Green", role = "aut"),
@@ -10,7 +10,7 @@ Authors@R: c(
     person("Will", "Robinson", role = "aut")
     )
 Maintainer: CRSU <apps@crsu.org.uk>
-Description: Show abolsute effects of a treatment using coloured people.
+Description: Show abolsute effects of an intervention using coloured glyphs.
 License: GPL 3.0 + file LICENSE
 URL: https://github.com/CRSU-Apps/PopViz
 BugReports: https://github.com/CRSU-Apps/PopViz/issues
