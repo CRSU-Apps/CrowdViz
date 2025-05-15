@@ -46,7 +46,7 @@
 #'   glyph_count = 10,
 #'   event_desired = FALSE,
 #'   outcome_name = "Fillings",
-#'   reference_name = "Mounthwash",
+#'   reference_name = "Mouthwash",
 #'   treatment_name = "Regular Tooth Brushing",
 #'   outcome_type = "RD",
 #'   reference_probability = 0.4,

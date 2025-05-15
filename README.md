@@ -1,4 +1,4 @@
-# CrowdViz
+# PopViz
 
 A visualisation package to show absolute effects as a proportion of a population.
 
@@ -8,12 +8,12 @@ A visualisation package to show absolute effects as a proportion of a population
 
 ![Simple visualisation example](images/example1.png)
 
-```         
+```
 PopViz::PopViz(
   glyph_count = 10,
   event_desired = FALSE,
   outcome_name = "Fillings",
-  reference_name = "Mounthwash",
+  reference_name = "Mouthwash",
   treatment_name = "Regular Tooth Brushing",
   outcome_type = "RD",
   reference_probability = 0.4,
@@ -26,7 +26,7 @@ PopViz::PopViz(
 
 ![Simple visualisation example](images/example2.png)
 
-```         
+```
 PopViz::PopViz(
   glyph_count = 20,
   person_multiplier = 5,
