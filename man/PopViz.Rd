@@ -81,9 +81,6 @@ ggplot2 plot object
 Create a population visualisation for absolute effects.
 }
 \examples{
-# For some reason, {ggplot2} must be loaded explicitly
-library(ggplot2)
-
 PopViz::PopViz(
   glyph_count = 10,
   event_desired = FALSE,

@@ -39,9 +39,6 @@
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_continuous geom_line xlim ylim annotate theme_void theme ggtitle element_text
 #'
 #' @examples
-#' # For some reason, {ggplot2} must be loaded explicitly
-#' library(ggplot2)
-#' 
 #' PopViz::PopViz(
 #'   glyph_count = 10,
 #'   event_desired = FALSE,

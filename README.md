@@ -2,6 +2,17 @@
 
 A visualisation package to show absolute effects as a proportion of a population.
 
+## Installation
+
+From your R console, use the following command
+
+```
+# install.packages("remotes") # If not already installed
+remotes::install_github("CRSU-Apps/PopViz")
+```
+
+If you encounter issues with {ggplot2} functions not being found, or with files not being found, try restarting your R session.
+
 ## Examples
 
 ### Using Defaults
