@@ -2,6 +2,8 @@
 
 # PopViz
 
+![PopViz Hex Logo](images/hex.svg){width="309"}
+
 A visualisation package to show absolute effects as a proportion of a population.
 
 ## Installation
